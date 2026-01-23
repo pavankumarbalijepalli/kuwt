@@ -1,0 +1,10 @@
+logs/
+data/
+.conda/
+.vscode/
+__pycache__/
+*.log
+*.env
+*.ini
+*.pdf
+*.ipynb
