@@ -1,12 +1,14 @@
-from datetime import datetime as dt
+from langchain_core.tools import tool
 from datetime import timedelta as td
-import requests
+from datetime import datetime as dt
 from utils import log
+import requests
 import os
 
 date_dash = (dt.now() - td(2)).strftime('%Y-%m-%d')
 date = (dt.now() - td(2)).strftime('%d%m%Y')
 
+@tool
 def download_hf_papers():
   log(f"Downloading papers for date - {date_dash}")
   res = requests.get(f"https://huggingface.co/api/daily_papers?date={date_dash}",

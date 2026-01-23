@@ -304,3 +304,12 @@ content_map = {
  '2026-06-26': ['Real-World Challenges > Product Development > Ethical AI',
   'Real-World Challenges > Product Development > Governance & compliance']
 }
+
+from langchain_core.tools import tool
+
+@tool
+def fetch_topic_by_date(date_str):
+    """
+      Fetch topics for a given date string in 'YYYY-MM-DD' format.
+    """
+    return content_map.get(date_str, [])

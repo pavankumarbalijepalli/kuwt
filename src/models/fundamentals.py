@@ -99,3 +99,35 @@ class LinkedinResponse(BaseModel):
         description="5–7 relevant hashtags for the LinkedIn article."
     )
     
+class InstagramResponse(BaseModel):
+    hook: str = Field(
+        ..., 
+        description="Hook section: Start with real-world scenario or question to grab attention")
+    intuition: str = Field(
+        ..., 
+        description="High-level mental model or analogy explaining the concept which follows the hook example"
+    )
+    pre_cta: str = Field(
+        ..., 
+        description="A brief call to action which summarizes teaching and invites them to follow or subscribe."
+    )
+    technical_details: str = Field(
+        ..., 
+        description=(
+            "Unified section containing: explanation, step-wise example, "
+            "when to use, and limitations/misconceptions"
+            "must follow intiution section"
+        )
+    )
+    cta: str = Field(
+        ..., 
+        description="Wrap-up, summary, and call to action + pointer to next topics"
+    )
+    caption: str = Field(
+        ..., 
+        description="Engaging caption for the Instagram post."
+    )
+    hashtags: str = Field(
+        ...,
+        description="5–7 relevant hashtags for the Instagram post."
+    )
