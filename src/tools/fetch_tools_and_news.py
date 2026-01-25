@@ -41,5 +41,13 @@ def fetch_tools():
     tools = tools.sort_values(by='trend', ascending=False).head(5)
     return tools
 
+def fetch_repos():
+    url = "https://github.com/trending?since=daily"
+    data = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    soup = BeautifulSoup(data.text, 'html.parser')
+    repo_links = soup.find_all(class_='Box-row')
+    repos = [repo_link.find(class_='Link').text.replace('\n', '').replace(' ','') for repo_link in repo_links]
+    return repos
+
 tools = fetch_tools()
 tools
