@@ -21,11 +21,13 @@ def fetch_news():
         time_range="week",
         include_usage=True
     )
-    return {article['title']: article['content'] for article in response['results']}
+    titles = [article['title'].strip() for article in response['results']]
+    contents = [article['content'].strip() for article in response['results']]
+    lengths = [len(content) for content in contents]
+    return pd.DataFrame({'name': titles, 'description': contents, 'length': lengths})
 
+@tool
 def fetch_tools():
-    
-    # Scrape TIAFT website for trending AI tools
     data = requests.get("https://theresanaiforthat.com",
                         headers={"User-Agent": "Mozilla/5.0"})
     soup = BeautifulSoup(data.text, 'html.parser')
@@ -39,15 +41,28 @@ def fetch_tools():
     tools = pd.DataFrame({'name': titles, 'url': urls, 'trend': trends, 'time': times})
     tools = tools[tools['time'] < 24]
     tools = tools.sort_values(by='trend', ascending=False).head(5)
+    
+    for url in tools['url']:
+        data = requests.get(f"https://theresanaiforthat.com{url}", headers={"User-Agent": "Mozilla/5.0"})
+        soup = BeautifulSoup(data.text, 'html.parser')
+        content = soup.find(class_='ai_description').text.strip().replace('\n', ' ')
+        tools.loc[tools['url'] == url, 'description'] = content
+        tools.loc[tools['url'] == url, 'length'] = len(content)
     return tools
 
+@tool
 def fetch_repos():
     url = "https://github.com/trending?since=daily"
     data = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     soup = BeautifulSoup(data.text, 'html.parser')
     repo_links = soup.find_all(class_='Box-row')
-    repos = [repo_link.find(class_='Link').text.replace('\n', '').replace(' ','') for repo_link in repo_links]
+    repos = pd.DataFrame({"name": [repo_link.find(class_='Link').text.replace('\n', '').replace(' ','') for repo_link in repo_links]})
+    for repo_link in repos['name']:
+        repo_url = f"https://www.github.com/{repo_link}"
+        repo_data = requests.get(repo_url, headers={"User-Agent": "Mozilla/5.0"})
+        repo_soup = BeautifulSoup(repo_data.text, 'html.parser')
+        content = repo_soup.find('article').text.strip()
+        repos.loc[repos['name'] == repo_link, 'description'] = content
+        # repos.loc[repos['name'] == repo_link, 'length'] = len(content)
+    repos['length'] = repos['description'].apply(lambda x: len(x) if x else 0)
     return repos
-
-tools = fetch_tools()
-tools

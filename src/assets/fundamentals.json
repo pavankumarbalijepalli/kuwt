@@ -1,0 +1,614 @@
+{
+    "not_started": [
+        [
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Linear Algebra > Matrix multiplication intuition",
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Linear Algebra > Eigenvalues/eigenvectors"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Linear Algebra > SVD & PCA math",
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Calculus > Derivatives, gradients"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Calculus > Chain rule (with backprop intuition)",
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Calculus > Optimization landscape"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Probability & Statistics > Random variables, distributions",
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Probability & Statistics > Expectation, variance, covariance"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Probability & Statistics > Bayes theorem",
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Probability & Statistics > KL divergence, entropy, cross-entropy"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Probability & Statistics > Multivariate statistics",
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > Python essentials"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > NumPy for ML",
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > Pandas for ML"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > Matplotlib/Seaborn",
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > Scikit-Learn basics"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > Writing clean ML code",
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > Reproducibility & seeds"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > GitHub for ML",
+            "Foundational Fundamentals (Prerequisites) > Python + ML Engineering > Virtual environments"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Data types & formats",
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Data collection"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Data cleaning",
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Feature extraction"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Exploratory Data Analysis",
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Train/validation/test splits"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Data leakage",
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Pipelines & preprocessing"
+        ],
+        [
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Feature engineering",
+            "Foundational Fundamentals (Prerequisites) > Data Fundamentals > Label engineering"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Foundations of ML > What is ML?",
+            "Machine Learning (Complete Coverage) > Foundations of ML > Types of ML"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Foundations of ML > Bias-variance tradeoff",
+            "Machine Learning (Complete Coverage) > Foundations of ML > Underfitting vs overfitting"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Foundations of ML > Regularization",
+            "Machine Learning (Complete Coverage) > Foundations of ML > Loss functions"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Foundations of ML > Gradient Descent variants",
+            "Machine Learning (Complete Coverage) > Foundations of ML > Cross-validation"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Foundations of ML > Evaluation metrics",
+            "Machine Learning (Complete Coverage) > Regression > Linear Regression"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Regression > Polynomial Regression",
+            "Machine Learning (Complete Coverage) > Regression > Ridge Regression"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Regression > Lasso",
+            "Machine Learning (Complete Coverage) > Regression > ElasticNet"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Regression > Normal Equation vs GD",
+            "Machine Learning (Complete Coverage) > Regression > R\u00b2, MSE, MAE"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Classification > Logistic Regression",
+            "Machine Learning (Complete Coverage) > Classification > Naive Bayes"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Classification > kNN",
+            "Machine Learning (Complete Coverage) > Classification > Decision Trees"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Classification > SVM (linear, RBF)",
+            "Machine Learning (Complete Coverage) > Classification > PR/F1/AUC metrics"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Ensemble Learning > Bagging",
+            "Machine Learning (Complete Coverage) > Ensemble Learning > Random Forest"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Ensemble Learning > AdaBoost",
+            "Machine Learning (Complete Coverage) > Ensemble Learning > GradientBoosting"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Ensemble Learning > XGBoost",
+            "Machine Learning (Complete Coverage) > Ensemble Learning > LightGBM"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Ensemble Learning > CatBoost",
+            "Machine Learning (Complete Coverage) > Ensemble Learning > Stacking & blending"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > KMeans",
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > GMM"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > DBSCAN",
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > Hierarchical Clustering"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > PCA",
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > t-SNE"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > UMAP",
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > Density estimation"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Unsupervised Learning > Anomaly Detection",
+            "Machine Learning (Complete Coverage) > Time Series ML > Stationarity, ACF/PACF"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Time Series ML > ARIMA/SARIMA",
+            "Machine Learning (Complete Coverage) > Time Series ML > Prophet"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Time Series ML > Feature-based forecasting",
+            "Machine Learning (Complete Coverage) > Time Series ML > Sliding window forecasting"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Recommendation Systems > Content-based",
+            "Machine Learning (Complete Coverage) > Recommendation Systems > Collaborative filtering"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Recommendation Systems > Matrix factorization",
+            "Machine Learning (Complete Coverage) > Recommendation Systems > Hybrid"
+        ],
+        [
+            "Machine Learning (Complete Coverage) > Recommendation Systems > Ranking models",
+            "Deep Learning (Full Spectrum) > Foundations > What is a neural network?"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Foundations > Perceptron",
+            "Deep Learning (Full Spectrum) > Foundations > Activation functions"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Foundations > Backpropagation",
+            "Deep Learning (Full Spectrum) > Foundations > Weight initialization"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Foundations > Vanishing/exploding gradients",
+            "Deep Learning (Full Spectrum) > Foundations > Batch norm"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Foundations > Layer norm",
+            "Deep Learning (Full Spectrum) > Foundations > Optimizers"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Foundations > Regularization",
+            "Deep Learning (Full Spectrum) > Foundations > GPUs & hardware"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Feedforward Neural Networks > MLPs",
+            "Deep Learning (Full Spectrum) > Feedforward Neural Networks > Autoencoders"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Feedforward Neural Networks > Variational Autoencoders",
+            "Deep Learning (Full Spectrum) > Computer Vision > CNN basics"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Computer Vision > Padding/stride/filters",
+            "Deep Learning (Full Spectrum) > Computer Vision > Max pooling"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Computer Vision > Average pooling",
+            "Deep Learning (Full Spectrum) > Computer Vision > ResNet"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Computer Vision > Inception",
+            "Deep Learning (Full Spectrum) > Computer Vision > EfficientNet"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Computer Vision > MobileNet",
+            "Deep Learning (Full Spectrum) > Computer Vision > DenseNet"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Computer Vision > Vision normalization layers",
+            "Deep Learning (Full Spectrum) > Modern CV > Vision Transformers overview"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Modern CV > ConvNeXt",
+            "Deep Learning (Full Spectrum) > Modern CV > SimCLR"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Modern CV > BYOL",
+            "Deep Learning (Full Spectrum) > Modern CV > Dino"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Modern CV > Diffusion basics",
+            "Deep Learning (Full Spectrum) > Sequence Models > RNN"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Sequence Models > Vanishing gradient problem",
+            "Deep Learning (Full Spectrum) > Sequence Models > LSTM"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Sequence Models > GRU",
+            "Deep Learning (Full Spectrum) > Sequence Models > Seq2Seq"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > Sequence Models > Attention (original)",
+            "Deep Learning (Full Spectrum) > NLP > Tokenization"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > NLP > Bag of Words",
+            "Deep Learning (Full Spectrum) > NLP > TF-IDF"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > NLP > Word2Vec",
+            "Deep Learning (Full Spectrum) > NLP > GloVe"
+        ],
+        [
+            "Deep Learning (Full Spectrum) > NLP > FastText",
+            "Deep Learning (Full Spectrum) > NLP > Encoder-decoder architectures"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Transformers > Why attention is all you need",
+            "Transformers & LLMs (Deep Dive) > Transformers > Multi-Head Attention"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Transformers > QKV",
+            "Transformers & LLMs (Deep Dive) > Transformers > Scaled dot-product"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Transformers > Self vs cross attention",
+            "Transformers & LLMs (Deep Dive) > Transformers > Positional encoding"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Transformers > Feedforward network",
+            "Transformers & LLMs (Deep Dive) > Transformers > Layer norm"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Transformers > Residual connections",
+            "Transformers & LLMs (Deep Dive) > Transformers > Encoder/decoder architecture"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Causal LM",
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Masked LM"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Denoising objective",
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Tokenization (BPE)"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Tokenization (WordPiece)",
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Tokenization (SentencePiece)"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Data curation",
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Distributed training"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Mixed precision",
+            "Transformers & LLMs (Deep Dive) > Training Transformers > Optimizers (AdamW)"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLMs > GPT models",
+            "Transformers & LLMs (Deep Dive) > LLMs > BERT"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLMs > T5",
+            "Transformers & LLMs (Deep Dive) > LLMs > LLaMA"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLMs > Mistral",
+            "Transformers & LLMs (Deep Dive) > LLMs > Phi"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLMs > Qwen",
+            "Transformers & LLMs (Deep Dive) > LLMs > Architecture differences"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > Full FT",
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > LoRA"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > PEFT",
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > QLoRA"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > Adapters",
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > Instruction tuning"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > RLHF",
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > RLAIF"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > DPO",
+            "Transformers & LLMs (Deep Dive) > LLM Fine Tuning > ORPO"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Evaluation > Perplexity",
+            "Transformers & LLMs (Deep Dive) > LLM Evaluation > Win-rate"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Evaluation > MT-bench",
+            "Transformers & LLMs (Deep Dive) > LLM Evaluation > BEIR"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Evaluation > TruthfulQA",
+            "Transformers & LLMs (Deep Dive) > LLM Evaluation > Safety testing"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > LLM Evaluation > Hallucination testing",
+            "Transformers & LLMs (Deep Dive) > Inference > KV cache"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Inference > Speculative decoding",
+            "Transformers & LLMs (Deep Dive) > Inference > Multi-token prediction"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Inference > Flash attention",
+            "Transformers & LLMs (Deep Dive) > Inference > Quantization"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Inference > Pruning",
+            "Transformers & LLMs (Deep Dive) > Inference > Distillation"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > RAG > Vector databases",
+            "Transformers & LLMs (Deep Dive) > RAG > Embeddings"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > RAG > Cross-encoder reranking",
+            "Transformers & LLMs (Deep Dive) > RAG > Agents in RAG"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > RAG > Retriever fine-tuning",
+            "Transformers & LLMs (Deep Dive) > RAG > Structured RAG"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > RAG > Graph RAG",
+            "Transformers & LLMs (Deep Dive) > RAG > Chunking strategies"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Agents > LangChain",
+            "Transformers & LLMs (Deep Dive) > Agents > Tool calling"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Agents > Memory",
+            "Transformers & LLMs (Deep Dive) > Agents > Multi-agent systems"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Agents > LangGraph",
+            "Transformers & LLMs (Deep Dive) > Agents > Function calling"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Advanced Research > MoE",
+            "Transformers & LLMs (Deep Dive) > Advanced Research > SSMs (Mamba)"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Advanced Research > Linear attention models",
+            "Transformers & LLMs (Deep Dive) > Advanced Research > Structured sparsity"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Advanced Research > Retrieval-augmented training",
+            "Transformers & LLMs (Deep Dive) > Advanced Research > Long-context models"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Advanced Research > VLMs",
+            "Transformers & LLMs (Deep Dive) > Advanced Research > Multimodal transformers"
+        ],
+        [
+            "Transformers & LLMs (Deep Dive) > Advanced Research > Diffusion models",
+            "Transformers & LLMs (Deep Dive) > Advanced Research > Generative video models"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > Deployment > Model packaging",
+            "MLOps for ML/DL/LLMs > Deployment > Docker"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > Deployment > FastAPI",
+            "MLOps for ML/DL/LLMs > Deployment > gRPC"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > MLOps Lifecycle > Experiment tracking",
+            "MLOps for ML/DL/LLMs > MLOps Lifecycle > Model registry"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > MLOps Lifecycle > Continuous training",
+            "MLOps for ML/DL/LLMs > MLOps Lifecycle > Monitoring"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > MLOps Lifecycle > Drift detection",
+            "MLOps for ML/DL/LLMs > MLOps Lifecycle > Logging & alerting"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > LLMOps > Prompt management",
+            "MLOps for ML/DL/LLMs > LLMOps > Logging interactions"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > LLMOps > Feedback loops",
+            "MLOps for ML/DL/LLMs > LLMOps > Safety monitoring"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > LLMOps > RAG pipelines",
+            "MLOps for ML/DL/LLMs > LLMOps > LLM eval changes"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > Scaling ML > Distributed training",
+            "MLOps for ML/DL/LLMs > Scaling ML > Sharding"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > Scaling ML > Parallelism",
+            "MLOps for ML/DL/LLMs > Scaling ML > Serverless inference"
+        ],
+        [
+            "MLOps for ML/DL/LLMs > Scaling ML > Caching strategies",
+            "Real-World Case Studies (Your New Category!) > Finance > Fraud detection"
+        ],
+        [
+            "Real-World Case Studies (Your New Category!) > Finance > Time series forecasting",
+            "Real-World Case Studies (Your New Category!) > Finance > LLMs for banking"
+        ],
+        [
+            "Real-World Case Studies (Your New Category!) > Finance > Portfolio optimization",
+            "Real-World Case Studies (Your New Category!) > Healthcare > Diagnosis prediction"
+        ],
+        [
+            "Real-World Case Studies (Your New Category!) > Healthcare > Clinical LLMs",
+            "Real-World Case Studies (Your New Category!) > Healthcare > Medical imaging"
+        ],
+        [
+            "Real-World Case Studies (Your New Category!) > Gaming > Difficulty balancing",
+            "Real-World Case Studies (Your New Category!) > Gaming > NPC behavior modelling"
+        ],
+        [
+            "Real-World Case Studies (Your New Category!) > Gaming > Unity + ML Agents",
+            "Real-World Case Studies (Your New Category!) > Recommendation Systems > ML + LLM recommenders"
+        ],
+        [
+            "Real-World Case Studies (Your New Category!) > E-commerce > Ranking systems",
+            "Real-World Case Studies (Your New Category!) > E-commerce > Search systems"
+        ],
+        [
+            "Real-World Case Studies (Your New Category!) > E-commerce > Product enrichment with LLMs",
+            "Interview Prep & Theory > Interview Prep > ML theory"
+        ],
+        [
+            "Interview Prep & Theory > Interview Prep > DL theory",
+            "Interview Prep & Theory > Interview Prep > Transformer theory"
+        ],
+        [
+            "Interview Prep & Theory > Interview Prep > Whiteboard problem solving",
+            "Interview Prep & Theory > Interview Prep > ML system design"
+        ],
+        [
+            "Interview Prep & Theory > Interview Prep > LLM architecture design",
+            "Interview Prep & Theory > Interview Prep > Coding interview prep"
+        ],
+        [
+            "Interview Prep & Theory > Interview Prep > Debugging ML models",
+            "Design Patterns > ML System Design > What is ML system design?"
+        ],
+        [
+            "Design Patterns > ML System Design > Online vs batch systems",
+            "Design Patterns > ML System Design > SLA/SLO"
+        ],
+        [
+            "Design Patterns > ML System Design > Real-time pipelines",
+            "Design Patterns > ML System Design > Feature stores"
+        ],
+        [
+            "Design Patterns > ML System Design > Real-time feature pipelines",
+            "Design Patterns > ML System Design > Feature versioning"
+        ],
+        [
+            "Design Patterns > ML System Design > Distributed training",
+            "Design Patterns > ML System Design > Model serving"
+        ],
+        [
+            "Design Patterns > ML System Design > Low-latency inference",
+            "Design Patterns > ML System Design > Autoscaling"
+        ],
+        [
+            "Design Patterns > ML System Design > Model caching",
+            "Design Patterns > ML System Design > Vector search systems"
+        ],
+        [
+            "Design Patterns > ML System Design > Hybrid search",
+            "Design Patterns > ML System Design > Recommendation system design"
+        ],
+        [
+            "Design Patterns > ML System Design > Monitoring & drift",
+            "Design Patterns > ML System Design > Explainability systems"
+        ],
+        [
+            "Design Patterns > ML System Design > Failure modes",
+            "Design Patterns > ML System Design > Safe fallback"
+        ],
+        [
+            "Design Patterns > ML System Design > A/B testing architecture",
+            "More than text > Multimodal AI > What is multimodal learning?"
+        ],
+        [
+            "More than text > Multimodal AI > Modality alignment",
+            "More than text > Multimodal AI > CLIP"
+        ],
+        [
+            "More than text > Multimodal AI > BLIP",
+            "More than text > Multimodal AI > BLIP-2"
+        ],
+        [
+            "More than text > Multimodal AI > Flamingo",
+            "More than text > Multimodal AI > LLaVA"
+        ],
+        [
+            "More than text > Multimodal AI > Qwen-VL",
+            "More than text > Multimodal AI > Kosmos"
+        ],
+        [
+            "More than text > Multimodal AI > Whisper",
+            "More than text > Multimodal AI > AudioLM"
+        ],
+        [
+            "More than text > Multimodal AI > MusicLM",
+            "More than text > Multimodal AI > Video Diffusion"
+        ],
+        [
+            "More than text > Multimodal AI > Sora",
+            "More than text > Multimodal AI > Runway"
+        ],
+        [
+            "More than text > Multimodal AI > Pika",
+            "More than text > Multimodal AI > Multimodal RAG"
+        ],
+        [
+            "More than text > Multimodal AI > Screenshot agents",
+            "More than text > Multimodal AI > Voice agents"
+        ],
+        [
+            "Real-World Challenges > Product Development > What is an AI product?",
+            "Real-World Challenges > Product Development > AI-first vs AI-augmented"
+        ],
+        [
+            "Real-World Challenges > Product Development > Use-case selection",
+            "Real-World Challenges > Product Development > AI UX"
+        ],
+        [
+            "Real-World Challenges > Product Development > Prompt UX",
+            "Real-World Challenges > Product Development > Failure UX"
+        ],
+        [
+            "Real-World Challenges > Product Development > Human-in-the-loop UX",
+            "Real-World Challenges > Product Development > Data strategy"
+        ],
+        [
+            "Real-World Challenges > Product Development > Labeling strategy",
+            "Real-World Challenges > Product Development > Synthetic data"
+        ],
+        [
+            "Real-World Challenges > Product Development > Model selection",
+            "Real-World Challenges > Product Development > RAG vs fine-tuning"
+        ],
+        [
+            "Real-World Challenges > Product Development > Success metrics",
+            "Real-World Challenges > Product Development > Red teaming"
+        ],
+        [
+            "Real-World Challenges > Product Development > A/B testing",
+            "Real-World Challenges > Product Development > Shipping AI products"
+        ],
+        [
+            "Real-World Challenges > Product Development > Latency budgets",
+            "Real-World Challenges > Product Development > Monetization models"
+        ],
+        [
+            "Real-World Challenges > Product Development > Pricing strategies",
+            "Real-World Challenges > Product Development > Enterprise AI"
+        ],
+        [
+            "Real-World Challenges > Product Development > Ethical AI",
+            "Real-World Challenges > Product Development > Governance & compliance"
+        ]
+    ],
+    "completed": [
+        [
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Why math matters for ML",
+            "Foundational Fundamentals (Prerequisites) > Math for ML > Linear Algebra > Vectors, matrices, norms"
+        ]
+    ]
+}
