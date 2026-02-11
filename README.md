@@ -1,4 +1,4 @@
-# AI Content Generation Automation - Keep Up With Technology (KUWT)
+# Keep Up With Technology (KUWT)
 
 ## Overview
 
