@@ -1,4 +1,6 @@
 from langchain_core.tools import tool
+from utils.logger import log
+from datetime import datetime as dt
 import json
 
 @tool
@@ -6,10 +8,9 @@ def fetch_topics():
     """
       Fetch topics for today.
     """
-    content_map = json.load(open("assets/fundamentals.json", "r"))
-    todays_topics = content_map['not_started'][0]
-    content_map['not_started'] = content_map['not_started'][1:]
-    content_map['completed'].append(todays_topics)
-    with open("assets/fundamentals.json", "w") as f:
-        json.dump(content_map, f, indent=4)
+    log("Tool Call Init: fetch_topics")
+    content_map = json.load(open("assets/input/fundamentals.json", "r"))
+    today = dt.now().strftime("%Y-%m-%d")
+    todays_topics = content_map[today]
+    log("Tool Call Finish: fetch_topics")
     return todays_topics

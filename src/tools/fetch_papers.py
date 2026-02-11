@@ -1,7 +1,10 @@
+import os
+os.chdir('..')
+
 from langchain_core.tools import tool
 from datetime import timedelta as td
 from datetime import datetime as dt
-from utils import log
+from utils.logger import log
 import requests
 import os
 
@@ -10,6 +13,9 @@ date = (dt.now() - td(2)).strftime('%d%m%Y')
 
 @tool
 def download_hf_papers():
+  if os.path.exists(f"papers/{date}"):
+    log(f"Papers already downloaded for date - {date}")
+    return
   log(f"Downloading papers for date - {date_dash}")
   res = requests.get(f"https://huggingface.co/api/daily_papers?date={date_dash}",
       headers={
@@ -40,3 +46,5 @@ def download_hf_papers():
       rank += 1
       log(f"Saved paper: {paper['paper']['title']} as papers/{date}/{rank}_{id}.pdf")
   return paper_names
+
+download_hf_papers()

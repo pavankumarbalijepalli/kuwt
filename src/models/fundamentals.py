@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from typing import List, Literal, Dict
 
 class YoutubeResponse(BaseModel):
     title: str = Field(
@@ -131,3 +130,22 @@ class InstagramResponse(BaseModel):
         ...,
         description="5–7 relevant hashtags for the Instagram post."
     )
+    
+class TeachersResponse(BaseModel):
+    linkedin_post: LinkedinResponse = Field(
+        ..., 
+        description="Content for LinkedIn post."
+    )
+    instagram_post: InstagramResponse = Field(
+        ...,
+        description="Content for Instagram post."
+    )
+    medium_post: MediumResponse = Field(
+        ...,
+        description="Content for Medium article."
+    )
+    youtube_post: YoutubeResponse = Field(
+        ...,
+        description="Content for YouTube video."
+    )
+    

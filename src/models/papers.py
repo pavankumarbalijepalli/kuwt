@@ -189,3 +189,22 @@ class InstagramResearchScript(BaseModel):
         ...,
         description="Suggestions for visuals, tone, and pacing to enhance viewer engagement."
     )
+    
+class ResearchersResponse(BaseModel):
+    linkedin_post: LinkedInResearchPost = Field(
+        ..., 
+        description="Content for LinkedIn post."
+    )
+    instagram_post: InstagramResearchScript = Field(
+        ...,
+        description="Content for Instagram post."
+    )
+    medium_post: MediumResearchArticle = Field(
+        ...,
+        description="Content for Medium article."
+    )
+    youtube_post: YouTubeResearchScript = Field(
+        ...,
+        description="Content for YouTube video."
+    )
+    
