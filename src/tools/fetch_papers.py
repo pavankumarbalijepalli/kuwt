@@ -5,17 +5,15 @@ from langchain_core.tools import tool
 from datetime import timedelta as td
 from datetime import datetime as dt
 from utils.logger import log
+import pypdf
 import requests
 import os
 
 date_dash = (dt.now() - td(2)).strftime('%Y-%m-%d')
 date = (dt.now() - td(2)).strftime('%d%m%Y')
 
-@tool
 def download_hf_papers():
-  if os.path.exists(f"papers/{date}"):
-    log(f"Papers already downloaded for date - {date}")
-    return
+  
   log(f"Downloading papers for date - {date_dash}")
   res = requests.get(f"https://huggingface.co/api/daily_papers?date={date_dash}",
       headers={
@@ -47,4 +45,31 @@ def download_hf_papers():
       log(f"Saved paper: {paper['paper']['title']} as papers/{date}/{rank}_{id}.pdf")
   return paper_names
 
-download_hf_papers()
+@tool("get_papers")
+def get_papers():
+  """
+  This tool fetches the papers downloaded for a specific date and extracts their content. It returns a dictionary where the keys are the paper filenames and the values are the extracted content of the papers. If the papers for the given date have not been downloaded yet, it will return an empty dictionary.
+  
+  Returns:
+    paper_names: dict - A dictionary where the keys are the paper filenames and the values are the extracted content
+  """
+  paper_names = {}
+  if not os.path.exists(f"papers/{date}"):
+    download_hf_papers()
+    log(f"Papers downloaded for date - {date}")
+    
+  for filename in os.listdir(f"papers/{date}"):
+    if not filename.endswith(".pdf"):
+      continue
+    paper_names[filename] = f"File Name: {filename}\n\n"
+  if paper_names:
+    for filename in os.listdir(f"papers/{date}"):
+      if not filename.endswith(".pdf"):
+          continue
+      reader = pypdf.PdfReader(f"papers/{date}/{filename}")
+      content = ""
+      log(f"Paper {filename} in progress with {len(reader.pages)}")
+      for page in reader.pages:
+          content += page.extract_text() + "\n"
+      paper_names[filename] += content
+  return paper_names
