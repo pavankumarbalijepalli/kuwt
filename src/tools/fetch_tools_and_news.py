@@ -6,6 +6,7 @@ import json
 import os
 
 def fetch_news():
+    ## TODO: https://news.smol.ai/issues - Explore this.
     """
     Fetch recent news articles related to AI advancements using the Tavily API.
     Returns:
@@ -13,7 +14,7 @@ def fetch_news():
     """
     client = TavilyClient(os.getenv("TAVILY_API"))
     response = client.search(
-        query="latest AI breakthroughs, agentic AI developments, enterprise AI adoption, robotics AI, AI infrastructure trends, regulation updates 2026",
+        query="latest AI models, agentic AI developments, robotics AI in the last week",
         topic="news",
         search_depth="advanced",
         max_results=10,
@@ -27,7 +28,6 @@ def fetch_news():
     lengths = [len(content) for content in contents]
     news = pd.DataFrame({"name": titles, "description": contents, "length": lengths})
     return news
-
 
 def fetch_tools():
     """
@@ -64,7 +64,12 @@ def fetch_tools():
     tools = tools[tools["time"] != "NA"]
 
     def convert_to_seconds(time_str):
-        if "d" in time_str:
+        time_str = time_str.strip()
+        if "y" in time_str:
+            return int(time_str[:-1]) * 365 * 24 * 3600
+        elif "mo" in time_str:
+            return int(time_str[:-2]) * 30 * 24 * 3600
+        elif "d" in time_str:
             return int(time_str[:-1]) * 24 * 3600
         elif "h" in time_str:
             return int(time_str[:-1]) * 3600
@@ -87,7 +92,6 @@ def fetch_tools():
         tools.loc[tools["url"] == url, "length"] = len(content)
 
     return tools
-
 
 def fetch_repos():
     """
