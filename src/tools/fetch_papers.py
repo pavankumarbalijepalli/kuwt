@@ -1,7 +1,3 @@
-import os
-os.chdir('..')
-
-from langchain_core.tools import tool
 from datetime import timedelta as td
 from datetime import datetime as dt
 from utils.logger import log
@@ -45,7 +41,6 @@ def download_hf_papers():
       log(f"Saved paper: {paper['paper']['title']} as papers/{date}/{rank}_{id}.pdf")
   return paper_names
 
-@tool("get_papers")
 def get_papers():
   """
   This tool fetches the papers downloaded for a specific date and extracts their content. It returns a dictionary where the keys are the paper filenames and the values are the extracted content of the papers. If the papers for the given date have not been downloaded yet, it will return an empty dictionary.
@@ -68,8 +63,9 @@ def get_papers():
           continue
       reader = pypdf.PdfReader(f"papers/{date}/{filename}")
       content = ""
-      log(f"Paper {filename} in progress with {len(reader.pages)}")
+      log(f"Paper {filename} with {len(reader.pages)} pages is getting ready...")
       for page in reader.pages:
           content += page.extract_text() + "\n"
       paper_names[filename] += content
+      log(f"Paper {filename} pre-processed!")
   return paper_names

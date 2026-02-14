@@ -1,5 +1,5 @@
-import os
-os.chdir('..')
+# import os
+# os.chdir('..')
 
 from langchain.agents import create_agent
 from brains.ollama import get_ollama_model
