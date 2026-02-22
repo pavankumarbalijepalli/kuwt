@@ -97,10 +97,8 @@ class AgentOrchestrator:
         for key, value in _json.items():
             fundamentals_content[key] = ''
             for title, content in value.items():
-                if title == 'walkthrough_code':
-                    fundamentals_content[key] += f"## {title.upper()}\n```python\n{content}\n```\n\n"
-                elif title == "hashtags":
-                    fundamentals_content[key] += f"## {title.upper()}\n```{content}```\n\n"
+                if title in ['walkthrough_code', 'hashtags']:
+                    fundamentals_content[key] += f"## {title.upper()}\n```\n{content}\n```\n\n"
                 else:
                     fundamentals_content[key] += f"## {title.upper()}\n{content}\n\n"
         log("Prepared content from Teachers Agent output.")
