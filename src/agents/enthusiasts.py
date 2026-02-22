@@ -19,6 +19,7 @@ from prompts.tools_and_news import (
     linkedin_prompt,
     medium_prompt,
     youtube_prompt,
+    TOOLS_AND_NEWS_PROMPT
 )
 from tools.fetch_tools_and_news import fetch_news_repos
 from utils.logger import log
@@ -28,28 +29,28 @@ llm = get_gemini_model(user="ENTHUSIAST_GEMINI")
 enthusiast_on_linkedin = create_agent(
     name="enthusiast_on_linkedin",
     model=llm,
-    system_prompt=linkedin_prompt,
+    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
     response_format=LinkedinNewsPost,
 )
 
 enthusiast_on_instagram = create_agent(
     name="enthusiast_on_instagram",
     model=llm,
-    system_prompt=instagram_prompt,
+    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
     response_format=InstagramNewsVideo,
 )
 
 enthusiast_on_medium = create_agent(
     name="enthusiast_on_medium",
     model=llm,
-    system_prompt=medium_prompt,
+    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
     response_format=MediumNewsPost,
 )
 
 enthusiast_on_youtube = create_agent(
     name="enthusiast_on_youtube",
     model=llm,
-    system_prompt=youtube_prompt,
+    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
     response_format=YoutubeNewsVideo,
 )
 

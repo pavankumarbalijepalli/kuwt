@@ -16,6 +16,7 @@ from prompts.fundamentals import (
     medium_prompt,
     youtube_prompt,
     instagram_prompt,
+    FUNDAMENTALS_PROMPT
 )
 from tools.fetch_topics import fetch_topics
 from datetime import datetime as dt
@@ -27,7 +28,7 @@ llm = get_gemini_model("TEACHER_GEMINI")
 teacher_on_linkedin = create_agent(
     name="teacher_on_linkedin",
     model=llm,
-    system_prompt=linkedin_prompt,
+    system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
     tools=[fetch_topics],
     response_format=LinkedinResponse,
 )
@@ -35,7 +36,7 @@ teacher_on_linkedin = create_agent(
 teacher_on_instagram = create_agent(
     name="teacher_on_instagram",
     model=llm,
-    system_prompt=instagram_prompt,
+    system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
     tools=[fetch_topics],
     response_format=InstagramResponse,
 )
@@ -43,7 +44,7 @@ teacher_on_instagram = create_agent(
 teacher_on_medium = create_agent(
     name="teacher_on_medium",
     model=llm,
-    system_prompt=medium_prompt,
+    system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
     tools=[fetch_topics],
     response_format=MediumResponse,
 )
@@ -51,11 +52,10 @@ teacher_on_medium = create_agent(
 teacher_on_youtube = create_agent(
     name="teacher_on_youtube",
     model=llm,
-    system_prompt=youtube_prompt,
+    system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
     tools=[fetch_topics],
     response_format=YoutubeResponse,
 )
-
 
 class Teachers:
     def __init__(self):

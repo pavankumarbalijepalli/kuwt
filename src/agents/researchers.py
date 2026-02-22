@@ -17,6 +17,7 @@ from prompts.papers import (
     medium_prompt,
     youtube_prompt,
     instagram_prompt,
+    PAPERS_PROMPT
 )
 from tools.fetch_papers import get_papers
 from datetime import datetime as dt
@@ -28,28 +29,28 @@ llm = get_gemini_model("RESEARCHER_GEMINI")
 researcher_on_linkedin = create_agent(
     name="researcher_on_linkedin",
     model=llm,
-    system_prompt=linkedin_prompt,
+    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
     response_format=LinkedInResearchPost,
 )
 
 researcher_on_instagram = create_agent(
     name="researcher_on_instagram",
     model=llm,
-    system_prompt=instagram_prompt,
+    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
     response_format=InstagramResearchScript,
 )
 
 researcher_on_medium = create_agent(
     name="researcher_on_medium",
     model=llm,
-    system_prompt=medium_prompt,
+    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
     response_format=MediumResearchArticle,
 )
 
 researcher_on_youtube = create_agent(
     name="researcher_on_youtube",
     model=llm,
-    system_prompt=youtube_prompt,
+    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
     response_format=YouTubeResearchScript,
 )
 

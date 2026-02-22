@@ -2,6 +2,7 @@ from agents.researchers import Researchers
 from agents.enthusiasts import Enthusiasts
 from agents.teachers import Teachers
 from utils.email_handler import send_email
+from datetime import datetime as dt
 from utils.logger import log
 import markdown
 import json
@@ -12,8 +13,7 @@ class AgentOrchestrator:
         self.researchers = Researchers()
         self.enthusiasts = Enthusiasts()
         self.teachers = Teachers()
-        # self.date = dt.now().strftime("%Y%m%d")
-        self.date = '20260221'
+        self.date = dt.now().strftime("%Y%m%d")
         log(f"Initialized Agent Orchestrator for date: {self.date}")
     
     def run(self):
@@ -121,16 +121,16 @@ class AgentOrchestrator:
             for key in paper_content[paper]:
                 if key == 'linkedin':
                     all_linkedin_posts += paper_content[paper][key]
-                    all_linkedin_posts += "<hr>"
+                    all_linkedin_posts += "<hr>\n\n"
                 elif key == 'instagram':
                     all_instagram_posts += paper_content[paper][key]
-                    all_instagram_posts += "<hr>"
+                    all_instagram_posts += "<hr>\n\n"
                 elif key == 'medium':
                     all_medium_posts += paper_content[paper][key]
-                    all_medium_posts += "<hr>"
+                    all_medium_posts += "<hr>\n\n"
                 elif key == 'youtube':
                     all_youtube_posts += paper_content[paper][key]
-                    all_youtube_posts += "<hr>"
+                    all_youtube_posts += "<hr>\n\n"
 
         # Today's News
         all_linkedin_posts += "\n\n# ENTHUSIAST\n\n"
@@ -142,25 +142,25 @@ class AgentOrchestrator:
         for post in news_content:
             if post == 'linkedin_post':
                 all_linkedin_posts += news_content[post]
-                all_linkedin_posts += "<hr>"
+                all_linkedin_posts += "<hr>\n\n"
             elif post == 'instagram_post':
                 all_instagram_posts += news_content[post]
-                all_instagram_posts += "<hr>"
+                all_instagram_posts += "<hr>\n\n"
             elif post == 'youtube_video':
                 all_youtube_posts += news_content[post]
-                all_youtube_posts += "<hr>"
+                all_youtube_posts += "<hr>\n\n"
 
         for repo in repos_content:
             for post in repos_content[repo]:
                 if post == 'linkedin_post':
                     all_linkedin_posts += repos_content[repo][post]
-                    all_linkedin_posts += "<hr>"
+                    all_linkedin_posts += "<hr>\n\n"
                 elif post == 'instagram_post':
                     all_instagram_posts += repos_content[repo][post]
-                    all_instagram_posts += "<hr>"
+                    all_instagram_posts += "<hr>\n\n"
                 elif post == 'youtube_video':
                     all_youtube_posts += repos_content[repo][post]
-                    all_youtube_posts += "<hr>"
+                    all_youtube_posts += "<hr>\n\n"
                     
         all_linkedin_posts += "\n\n# TEACHER\n\n"
         all_instagram_posts += "\n\n# TEACHER\n\n"
@@ -171,16 +171,16 @@ class AgentOrchestrator:
         for key in fundamentals_content:
             if key == 'linkedin_post':
                 all_linkedin_posts += fundamentals_content[key]
-                all_linkedin_posts += "<hr>"
+                all_linkedin_posts += "<hr>\n\n"
             elif key == 'instagram_post':
                 all_instagram_posts += fundamentals_content[key]
-                all_instagram_posts += "<hr>"
+                all_instagram_posts += "<hr>\n\n"
             elif key == 'medium_post':
                 all_medium_posts += fundamentals_content[key]
-                all_medium_posts += "<hr>"
+                all_medium_posts += "<hr>\n\n"
             elif key == 'youtube_post':
                 all_youtube_posts += fundamentals_content[key]
-                all_youtube_posts += "<hr>"
+                all_youtube_posts += "<hr>\n\n"
         return all_linkedin_posts, all_instagram_posts, all_medium_posts, all_youtube_posts
     
     def send_email(self):
@@ -194,8 +194,21 @@ class AgentOrchestrator:
         log("Sending email for Youtube content...")
         send_email(full_post=markdown.markdown(youtube_post), post_type="Youtube Posts")
         
-        
+    def save_markdown(self):
+        linkedin_post, instagram_post, medium_post, youtube_post = self.prepare_body()
+        if not os.path.exists(f"assets/output/{self.date}"):
+            os.makedirs(f"assets/output/{self.date}")
+        with open(f"assets/output/{self.date}/linkedin.md", "w") as f:
+            f.write(linkedin_post)
+        with open(f"assets/output/{self.date}/instagram.md", "w") as f:
+            f.write(instagram_post)
+        with open(f"assets/output/{self.date}/medium.md", "w") as f:
+            f.write(medium_post)
+        with open(f"assets/output/{self.date}/youtube.md", "w") as f:
+            f.write(youtube_post)
+
 if __name__ == "__main__":
     orchestrator = AgentOrchestrator()
     orchestrator.run()
     orchestrator.send_email()
+    # orchestrator.save_markdown()

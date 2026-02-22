@@ -6,7 +6,7 @@ class LinkedinNewsPost(BaseModel):
     call_to_action: str = Field(..., description="CTA to encourage engagement")
     hashtags: list[str] = Field(default_factory=list, description="Relevant hashtags")
     engagement_tips: str = Field(..., description="Tips for maximizing engagement")
-
+    word_count: int = Field(..., description="Total word count (should be between 120–220).")
 class MediumNewsPost(BaseModel):
     headline: str = Field(..., description="Compelling article headline")
     hook: str = Field(..., description="Opening paragraph to hook readers")
