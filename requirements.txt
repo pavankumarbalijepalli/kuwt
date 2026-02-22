@@ -20,3 +20,4 @@ transformers==4.46.3
 secure-smtplib==0.1.1
 kokoro>=0.9.4
 soundfile
+markdown
