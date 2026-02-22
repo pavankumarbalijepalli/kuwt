@@ -33,12 +33,12 @@ def download_hf_papers():
     url = f"https://arxiv.org/pdf/{id}"
     response = requests.get(url)
     print(f"Downloading {paper['paper']['title']} from {url}")
-    if not os.path.exists(f"papers/{date}"):
-      os.makedirs(f"papers/{date}")
-    with open(f"papers/{date}/{rank}_{id}.pdf", 'wb') as file:
+    if not os.path.exists(f"assets/input/papers/{date}"):
+      os.makedirs(f"assets/input/papers/{date}")
+    with open(f"assets/input/papers/{date}/{rank}_{id}.pdf", 'wb') as file:
       file.write(response.content)
       rank += 1
-      log(f"Saved paper: {paper['paper']['title']} as papers/{date}/{rank}_{id}.pdf")
+      log(f"Saved paper: {paper['paper']['title']} as assets/input/papers/{date}/{rank}_{id}.pdf")
   return paper_names
 
 def get_papers():
@@ -49,23 +49,21 @@ def get_papers():
     paper_names: dict - A dictionary where the keys are the paper filenames and the values are the extracted content
   """
   paper_names = {}
-  if not os.path.exists(f"papers/{date}"):
-    download_hf_papers()
-    log(f"Papers downloaded for date - {date}")
-    
-  for filename in os.listdir(f"papers/{date}"):
+  if not os.path.exists(f"assets/input/papers/{date}"):
+    paper_names = download_hf_papers()
+  else:
+    for filename in os.listdir(f"assets/input/papers/{date}"):
+      if filename.endswith(".pdf"):
+        paper_names[filename] = ""
+  log(f"Papers downloaded for date -  {date}")
+  for filename in os.listdir(f"assets/input/papers/{date}"):
     if not filename.endswith(".pdf"):
-      continue
-    paper_names[filename] = f"File Name: {filename}\n\n"
-  if paper_names:
-    for filename in os.listdir(f"papers/{date}"):
-      if not filename.endswith(".pdf"):
-          continue
-      reader = pypdf.PdfReader(f"papers/{date}/{filename}")
-      content = ""
-      log(f"Paper {filename} with {len(reader.pages)} pages is getting ready...")
-      for page in reader.pages:
-          content += page.extract_text() + "\n"
-      paper_names[filename] += content
-      log(f"Paper {filename} pre-processed!")
+        continue
+    reader = pypdf.PdfReader(f"assets/input/papers/{date}/{filename}")
+    content = ""
+    log(f"Paper {filename} with {len(reader.pages)} pages is getting ready...")
+    for page in reader.pages:
+        content += page.extract_text() + "\n"
+    paper_names[filename] += content
+    log(f"Paper {filename} pre-processed!")
   return paper_names

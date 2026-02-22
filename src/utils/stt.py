@@ -1,6 +1,4 @@
-import os
 from utils import log
-import torchaudio as ta
 from faster_whisper import WhisperModel
 from kokoro import KPipeline
 import soundfile as sf

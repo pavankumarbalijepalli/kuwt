@@ -38,9 +38,15 @@ class YoutubeNewsVideo(BaseModel):
     call_to_action: str = Field(..., description="Subscribe/engagement prompt")
 
 class InstagramNewsVideo(BaseModel):
-    caption: str = Field(..., description="Engaging post caption with hook")
-    hook: str = Field(..., description="First 3 seconds hook for video")
-    content: str = Field(..., description="Video content description")
+    caption: str = Field(..., description="Engaging reel caption with hook")
+    hook: str = Field(..., description="First 3 seconds hook for reel")
+    what_happened: str = Field(..., description="Detailed explanation of the news or tool")
+    what_will_change: str = Field(..., description="Analysis of how this will impact the industry or users")
+    who_will_be_affected: str = Field(..., description="Discussion of who will be affected and how")
+    key_takeaways: list[str] = Field(
+        ..., description="Main points readers should remember"
+    )
+    whats_next: str = Field(..., description="Discussion of potential future developments or implications")
     hashtags: list[str] = Field(..., description="Instagram hashtags")
     call_to_action: str = Field(..., description="Engagement prompt")
     emoji_strategy: str = Field(..., description="Emoji use for visual appeal")

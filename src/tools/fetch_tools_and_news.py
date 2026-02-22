@@ -1,33 +1,39 @@
-from tavily import TavilyClient
+# import os
+# os.chdir("..")
+
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+from datetime import datetime as dt
 import json
-import os
+from utils.logger import log
 
 def fetch_news():
-    ## TODO: https://news.smol.ai/issues - Explore this.
     """
-    Fetch recent news articles related to AI advancements using the Tavily API.
+    Fetch recent news articles related to AI advancements using the smol.ai news.
     Returns:
-        A dictionary of news articles with relevant details.
+        A string containing the formatted news content.
     """
-    client = TavilyClient(os.getenv("TAVILY_API"))
-    response = client.search(
-        query="latest AI models, agentic AI developments, robotics AI in the last week",
-        topic="news",
-        search_depth="advanced",
-        max_results=10,
-        time_range="week",
-        include_usage=True,
+    log("Fetching news from smol.ai...")
+    data = requests.get(
+        "https://news.smol.ai/issues", headers={"User-Agent": "Mozilla/5.0"}
     )
-    titles = [
-        "News Title: " + article["title"].strip() for article in response["results"]
-    ]
-    contents = [article["content"].strip() for article in response["results"]]
-    lengths = [len(content) for content in contents]
-    news = pd.DataFrame({"name": titles, "description": contents, "length": lengths})
-    return news
+    soup = BeautifulSoup(data.text, "html.parser")
+    year_month = dt.now().strftime("%Y-%B")
+    latest_url = soup.find_all("div", id=f"{year_month}")[0].find_all("ul")[0].find_all("li")[0].find_all("a")[0]['href']
+    
+    title = soup.find_all("div", id=f"{year_month}")[0].find_all("ul")[0].find_all("li")[0].find_all('div', class_="font-semibold")[0].text.strip()
+    latest_data = requests.get(
+        f"https://news.smol.ai{latest_url}", headers={"User-Agent": "Mozilla/5.0"}
+    )
+    soup = BeautifulSoup(latest_data.text, "html.parser")
+    content = soup.find_all("main", id="main-content")[0].text
+    
+    summary = content.split('AI Reddit Recap')[0].split('AI Twitter Recap')[0].strip()
+    twitter_recap = content.split('AI Reddit Recap')[0].split('AI Twitter Recap')[-1].strip()
+    reddit_recap = content.split('AI Reddit Recap')[-1].split('Less Technical AI Subreddit Recap')[0].strip()
+    log(f"Fetched news article: {title}")
+    return {"latest_url": latest_url, "content": f"Title: {title}, Main Headlines: {summary}, Twitter Recap: {twitter_recap}, Reddit Recap: {reddit_recap}"}
 
 def fetch_tools():
     """
@@ -99,6 +105,7 @@ def fetch_repos():
     Returns:
         A DataFrame of trending GitHub repositories with relevant details.
     """
+    log("Fetching trending repositories from GitHub...")
     url = "https://github.com/trending?since=daily"
     data = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     soup = BeautifulSoup(data.text, "html.parser")
@@ -120,25 +127,27 @@ def fetch_repos():
         content = repo_soup.find("article").text.strip()
         repos.loc[repos["name"] == repo_link, "description"] = content
     repos["length"] = repos["description"].apply(lambda x: len(x) if x else 0)
+    log("Fetched Top 3 trending repositories from GitHub.")
     return repos
 
-def run_fetch_tools_and_news():
+def fetch_news_repos():
     covered = json.load(open("assets/input/covered.json", "r"))
     
-    news = fetch_news()[["name", "description"]]
-    for item in covered["news"]:
-        news = news.drop(news[news["name"].str.contains(item)].index)
-    covered["news"].extend(news["name"].apply(lambda x: x.replace("News Title: ", "").strip()).tolist())
+    news = fetch_news()
+    if news['latest_url'] in covered["news"]:
+        news = {"latest_url": news['latest_url'], "content": "No new news articles to fetch"}
+    covered["news"].extend([news["latest_url"]])
     
-    repos = fetch_repos()[["name", "description"]]
+    repos = fetch_repos()[["name", "description"]].head(3)
     for item in covered["repos"]:
         repos = repos.drop(repos[repos["name"].str.contains(item)].index)
     covered["repos"].extend(repos["name"].apply(lambda x: x.replace("Repo Name: ", "").strip()).tolist())
+    repos = {row['name']: row['description'] for _, row in repos.iterrows()}
     
-    tools = fetch_tools()[["name", "description"]]
-    for item in covered["tools"]:
-        tools = tools.drop(tools[tools["name"].str.contains(item)].index)
-    covered["tools"].extend(tools["name"].apply(lambda x: x.replace("Tool Name: ", "").strip()).tolist())
+    # tools = fetch_tools()[["name", "description"]]
+    # for item in covered["tools"]:
+    #     tools = tools.drop(tools[tools["name"].str.contains(item)].index)
+    # covered["tools"].extend(tools["name"].apply(lambda x: x.replace("Tool Name: ", "").strip()).tolist())
     
     json.dump(covered, open("assets/input/covered.json", "w"), indent=4)
-    return news, repos, tools
+    return news, repos
