@@ -111,7 +111,7 @@ class AgentOrchestrator:
         fundamentals_content = self.prepare_teacher()
 
         # Today's Linkedin Posts
-        all_linkedin_posts = "# RESEARCHER\n\n"
+        all_linkedin_posts = f"# RESEARCHER \n\n New AI Research Advancements as of {self.date}\n\n"
         all_instagram_posts = "# RESEARCHER\n\n"
         all_medium_posts = "# RESEARCHER\n\n"
         all_youtube_posts = "# RESEARCHER\n\n"
@@ -133,7 +133,7 @@ class AgentOrchestrator:
                     all_youtube_posts += "<hr>\n\n"
 
         # Today's News
-        all_linkedin_posts += "\n\n# ENTHUSIAST\n\n"
+        all_linkedin_posts += f"\n\n# ENTHUSIAST AI News as of {self.date}\n\n"
         all_instagram_posts += "\n\n# ENTHUSIAST\n\n"
         all_medium_posts += "\n\n# ENTHUSIAST\n\n"
         all_youtube_posts += "\n\n# ENTHUSIAST\n\n"
