@@ -7,6 +7,10 @@ import pandas as pd
 from datetime import datetime as dt
 import json
 from utils.logger import log
+import redis
+import os
+
+r = redis.Redis.from_url(os.environ["REDIS_URL"])
 
 def fetch_news():
     """
@@ -131,7 +135,7 @@ def fetch_repos():
     return repos
 
 def fetch_news_repos():
-    covered = json.load(open("assets/input/covered.json", "r"))
+    covered = json.loads(r.get('covered'))
     
     news = fetch_news()
     if news['latest_url'] in covered["news"]:
