@@ -12,13 +12,7 @@ from models.papers import (
     InstagramResearchScript,
     ResearchersResponse,
 )
-from prompts.papers import (
-    linkedin_prompt,
-    medium_prompt,
-    youtube_prompt,
-    instagram_prompt,
-    PAPERS_PROMPT
-)
+from prompts.papers import PAPERS_PROMPT
 from tools.fetch_papers import get_papers
 from datetime import datetime as dt
 from utils.logger import log
@@ -86,11 +80,17 @@ class Researchers:
         self.content = {}
         for paper_name, paper_content in self.papers.items():
             log(f"Processing paper: {paper_name}")
-            linkedin_response = self.run_researcher(paper_content, self.linkedin_researcher)
-            instagram_response = self.run_researcher(paper_content, self.instagram_researcher)
+            linkedin_response = self.run_researcher(
+                paper_content, self.linkedin_researcher
+            )
+            instagram_response = self.run_researcher(
+                paper_content, self.instagram_researcher
+            )
             medium_response = self.run_researcher(paper_content, self.medium_researcher)
-            youtube_response = self.run_researcher(paper_content, self.youtube_researcher)
-            
+            youtube_response = self.run_researcher(
+                paper_content, self.youtube_researcher
+            )
+
             log("Paper processed. Storing results...")
             self.content[paper_name] = ResearchersResponse(
                 linkedin_post=linkedin_response,

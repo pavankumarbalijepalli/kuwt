@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
 
+
 class LinkedinNewsPost(BaseModel):
     hook: str = Field(..., description="Engaging opening line to capture attention")
     body: str = Field(
@@ -18,6 +19,7 @@ class LinkedinNewsPost(BaseModel):
     word_count: int = Field(
         ..., description="Total word count (should be between 120–220)."
     )
+
 
 class MediumNewsPost(BaseModel):
     headline: str = Field(..., description="Compelling article headline")

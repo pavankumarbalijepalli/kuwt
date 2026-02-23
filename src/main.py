@@ -8,6 +8,7 @@ import markdown
 import json
 import os
 
+
 class AgentOrchestrator:
     def __init__(self):
         self.researchers = Researchers()
@@ -15,10 +16,12 @@ class AgentOrchestrator:
         self.teachers = Teachers()
         self.date = dt.now().strftime("%Y%m%d")
         log(f"Initialized Agent Orchestrator for date: {self.date}")
-    
+
     def run(self):
-        if os.path.exists(f'assets/output/{self.date}'):
-            log(f"Output for date {self.date} already exists. Skipping agent execution.")
+        if os.path.exists(f"assets/output/{self.date}"):
+            log(
+                f"Output for date {self.date} already exists. Skipping agent execution."
+            )
             return
         log("Starting Agent Orchestrator...")
         log("Running Researchers Agent...")
@@ -28,77 +31,87 @@ class AgentOrchestrator:
         log("Running Teachers Agent...")
         self.teachers.run()
         log("All agents have completed their tasks.")
-    
+
     def prepare_researcher(self):
         log("Preparing content from Researchers Agent output...")
-        _json = json.load(open(f'assets/output/{self.date}/researchers.json'))
+        _json = json.load(open(f"assets/output/{self.date}/researchers.json"))
         # Prepare Markdown formatted string
         papers_content = {}
         for paper in _json:
             papers_content[paper] = {}
             for key, value in _json[paper].items():
-                if key == 'linkedin_post':
+                if key == "linkedin_post":
                     linkedin = _json[paper][key]
                     linkedin_content = ""
                     for title, content in linkedin.items():
                         if isinstance(content, dict):
                             linkedin_content += f"{content['content']}\n\n"
-                    papers_content[paper]['linkedin'] = linkedin_content
-                elif key == 'instagram_post':
+                    papers_content[paper]["linkedin"] = linkedin_content
+                elif key == "instagram_post":
                     instagram = _json[paper][key]
                     instagram_content = ""
                     for title, content in instagram.items():
                         if isinstance(content, dict):
-                            instagram_content += f"## {title.upper()}\n{content['content']}\n\n"
-                    papers_content[paper]['instagram'] = instagram_content
-                elif key == 'medium_post':
+                            instagram_content += (
+                                f"## {title.upper()}\n{content['content']}\n\n"
+                            )
+                    papers_content[paper]["instagram"] = instagram_content
+                elif key == "medium_post":
                     medium = _json[paper][key]
                     medium_content = ""
                     for title, content in medium.items():
                         if isinstance(content, dict):
-                            medium_content += f"## {title.upper()}\n{content['content']}\n\n"
-                    papers_content[paper]['medium'] = medium_content
-                elif key == 'youtube_post':
+                            medium_content += (
+                                f"## {title.upper()}\n{content['content']}\n\n"
+                            )
+                    papers_content[paper]["medium"] = medium_content
+                elif key == "youtube_post":
                     youtube = _json[paper][key]
                     youtube_content = ""
                     for title, content in youtube.items():
                         if isinstance(content, dict):
-                            youtube_content += f"## {title.upper()}\n{content['content']}\n\n"
-                    papers_content[paper]['youtube'] = youtube_content
+                            youtube_content += (
+                                f"## {title.upper()}\n{content['content']}\n\n"
+                            )
+                    papers_content[paper]["youtube"] = youtube_content
         log("Prepared content from Researchers Agent output.")
         return papers_content
-    
+
     def prepare_enthusiast(self):
         log("Preparing content from Enthusiasts Agent output...")
-        _json = json.load(open(f'assets/output/{self.date}/enthusiasts.json'))
-        news = _json['news']['news']
-        repos = _json['repos']
+        _json = json.load(open(f"assets/output/{self.date}/enthusiasts.json"))
+        news = _json["news"]["news"]
+        repos = _json["repos"]
 
         news_content = {}
         for post, content in news.items():
-            news_content[post] = ''
+            news_content[post] = ""
             for title, value in content.items():
                 news_content[post] += f"## {title.upper()}\n{value}\n\n"
-                
+
         repos_content = {}
         for repo, content in repos.items():
             repos_content[repo] = {}
             for title, value in content.items():
-                repos_content[repo][title] = ''
+                repos_content[repo][title] = ""
                 for sub_title, sub_value in value.items():
-                    repos_content[repo][title] += f"## {sub_title.upper()}\n{sub_value}\n\n"
+                    repos_content[repo][title] += (
+                        f"## {sub_title.upper()}\n{sub_value}\n\n"
+                    )
         log("Prepared content from Enthusiasts Agent output.")
         return news_content, repos_content
-    
+
     def prepare_teacher(self):
         log("Preparing content from Teachers Agent output...")
-        _json = json.load(open(f'assets/output/{self.date}/teachers.json'))
+        _json = json.load(open(f"assets/output/{self.date}/teachers.json"))
         fundamentals_content = {}
         for key, value in _json.items():
-            fundamentals_content[key] = ''
+            fundamentals_content[key] = ""
             for title, content in value.items():
-                if title in ['walkthrough_code', 'hashtags']:
-                    fundamentals_content[key] += f"## {title.upper()}\n```\n{content}\n```\n\n"
+                if title in ["walkthrough_code", "hashtags"]:
+                    fundamentals_content[key] += (
+                        f"## {title.upper()}\n```\n{content}\n```\n\n"
+                    )
                 else:
                     fundamentals_content[key] += f"## {title.upper()}\n{content}\n\n"
         log("Prepared content from Teachers Agent output.")
@@ -111,7 +124,9 @@ class AgentOrchestrator:
         fundamentals_content = self.prepare_teacher()
 
         # Today's Linkedin Posts
-        all_linkedin_posts = f"# RESEARCHER \n\n New AI Research Advancements as of {self.date}\n\n"
+        all_linkedin_posts = (
+            f"# RESEARCHER \n\n New AI Research Advancements as of {self.date}\n\n"
+        )
         all_instagram_posts = "# RESEARCHER\n\n"
         all_medium_posts = "# RESEARCHER\n\n"
         all_youtube_posts = "# RESEARCHER\n\n"
@@ -119,16 +134,16 @@ class AgentOrchestrator:
         log("Aggregating researcher content for email body...")
         for paper in paper_content:
             for key in paper_content[paper]:
-                if key == 'linkedin':
+                if key == "linkedin":
                     all_linkedin_posts += paper_content[paper][key]
                     all_linkedin_posts += "<hr>\n\n"
-                elif key == 'instagram':
+                elif key == "instagram":
                     all_instagram_posts += paper_content[paper][key]
                     all_instagram_posts += "<hr>\n\n"
-                elif key == 'medium':
+                elif key == "medium":
                     all_medium_posts += paper_content[paper][key]
                     all_medium_posts += "<hr>\n\n"
-                elif key == 'youtube':
+                elif key == "youtube":
                     all_youtube_posts += paper_content[paper][key]
                     all_youtube_posts += "<hr>\n\n"
 
@@ -140,28 +155,28 @@ class AgentOrchestrator:
 
         log("Aggregating enthusiast content for email body...")
         for post in news_content:
-            if post == 'linkedin_post':
+            if post == "linkedin_post":
                 all_linkedin_posts += news_content[post]
                 all_linkedin_posts += "<hr>\n\n"
-            elif post == 'instagram_post':
+            elif post == "instagram_post":
                 all_instagram_posts += news_content[post]
                 all_instagram_posts += "<hr>\n\n"
-            elif post == 'youtube_video':
+            elif post == "youtube_video":
                 all_youtube_posts += news_content[post]
                 all_youtube_posts += "<hr>\n\n"
 
         for repo in repos_content:
             for post in repos_content[repo]:
-                if post == 'linkedin_post':
+                if post == "linkedin_post":
                     all_linkedin_posts += repos_content[repo][post]
                     all_linkedin_posts += "<hr>\n\n"
-                elif post == 'instagram_post':
+                elif post == "instagram_post":
                     all_instagram_posts += repos_content[repo][post]
                     all_instagram_posts += "<hr>\n\n"
-                elif post == 'youtube_video':
+                elif post == "youtube_video":
                     all_youtube_posts += repos_content[repo][post]
                     all_youtube_posts += "<hr>\n\n"
-                    
+
         all_linkedin_posts += "\n\n# TEACHER\n\n"
         all_instagram_posts += "\n\n# TEACHER\n\n"
         all_medium_posts += "\n\n# TEACHER\n\n"
@@ -169,31 +184,40 @@ class AgentOrchestrator:
 
         log("Aggregating teacher content for email body...")
         for key in fundamentals_content:
-            if key == 'linkedin_post':
+            if key == "linkedin_post":
                 all_linkedin_posts += fundamentals_content[key]
                 all_linkedin_posts += "<hr>\n\n"
-            elif key == 'instagram_post':
+            elif key == "instagram_post":
                 all_instagram_posts += fundamentals_content[key]
                 all_instagram_posts += "<hr>\n\n"
-            elif key == 'medium_post':
+            elif key == "medium_post":
                 all_medium_posts += fundamentals_content[key]
                 all_medium_posts += "<hr>\n\n"
-            elif key == 'youtube_post':
+            elif key == "youtube_post":
                 all_youtube_posts += fundamentals_content[key]
                 all_youtube_posts += "<hr>\n\n"
-        return all_linkedin_posts, all_instagram_posts, all_medium_posts, all_youtube_posts
-    
+        return (
+            all_linkedin_posts,
+            all_instagram_posts,
+            all_medium_posts,
+            all_youtube_posts,
+        )
+
     def send_email(self):
         linkedin_post, instagram_post, medium_post, youtube_post = self.prepare_body()
         log("Sending email for Linkedin content...")
-        send_email(full_post=markdown.markdown(linkedin_post), post_type="Linkedin Posts")
+        send_email(
+            full_post=markdown.markdown(linkedin_post), post_type="Linkedin Posts"
+        )
         log("Sending email for Instagram content...")
-        send_email(full_post=markdown.markdown(instagram_post), post_type="Instagram Posts")
+        send_email(
+            full_post=markdown.markdown(instagram_post), post_type="Instagram Posts"
+        )
         log("Sending email for Medium content...")
         send_email(full_post=markdown.markdown(medium_post), post_type="Medium Posts")
         log("Sending email for Youtube content...")
         send_email(full_post=markdown.markdown(youtube_post), post_type="Youtube Posts")
-        
+
     def save_markdown(self):
         linkedin_post, instagram_post, medium_post, youtube_post = self.prepare_body()
         if not os.path.exists(f"assets/output/{self.date}"):
@@ -206,6 +230,7 @@ class AgentOrchestrator:
             f.write(medium_post)
         with open(f"assets/output/{self.date}/youtube.md", "w") as f:
             f.write(youtube_post)
+
 
 if __name__ == "__main__":
     orchestrator = AgentOrchestrator()

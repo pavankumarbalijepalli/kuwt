@@ -14,13 +14,7 @@ from models.tools_and_news import (
     MediumNewsPost,
     YoutubeNewsVideo,
 )
-from prompts.tools_and_news import (
-    instagram_prompt,
-    linkedin_prompt,
-    medium_prompt,
-    youtube_prompt,
-    TOOLS_AND_NEWS_PROMPT
-)
+from prompts.tools_and_news import TOOLS_AND_NEWS_PROMPT
 from tools.fetch_tools_and_news import fetch_news_repos
 from utils.logger import log
 
@@ -54,6 +48,7 @@ enthusiast_on_youtube = create_agent(
     response_format=YoutubeNewsVideo,
 )
 
+
 class Enthusiasts:
     def __init__(self):
         self.linkedin_enthusiast = enthusiast_on_linkedin
@@ -79,15 +74,10 @@ class Enthusiasts:
 
     def run(self):
         raw_content = {
-            "news": {
-                "news": {"content": self.news["content"]}
-            },
-            "repos": self.repos
+            "news": {"news": {"content": self.news["content"]}},
+            "repos": self.repos,
         }
-        if (
-            not raw_content["news"]
-            and not raw_content["repos"]
-        ):
+        if not raw_content["news"] and not raw_content["repos"]:
             self.content = "No papers found for the given date."
 
         self.content = {"news": {}, "repos": {}}
@@ -121,4 +111,3 @@ class Enthusiasts:
         filename = f"assets/output/{self.date}/enthusiasts.json"
         json.dump(self.content, open(filename, "w"), indent=4)
         log(f"Content saved to {filename}")
-

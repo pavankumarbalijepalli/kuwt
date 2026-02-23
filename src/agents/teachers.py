@@ -11,13 +11,7 @@ from models.fundamentals import (
     InstagramResponse,
     TeachersResponse,
 )
-from prompts.fundamentals import (
-    linkedin_prompt,
-    medium_prompt,
-    youtube_prompt,
-    instagram_prompt,
-    FUNDAMENTALS_PROMPT
-)
+from prompts.fundamentals import FUNDAMENTALS_PROMPT
 from tools.fetch_topics import fetch_topics
 from datetime import datetime as dt
 from utils.logger import log
@@ -57,6 +51,7 @@ teacher_on_youtube = create_agent(
     response_format=YoutubeResponse,
 )
 
+
 class Teachers:
     def __init__(self):
         self.linkedin_teacher = teacher_on_linkedin
@@ -69,7 +64,13 @@ class Teachers:
 
     def run_teacher(self, teacher, retries=3):
         log(f"Running Agent: {teacher.name}")
-        response = teacher.invoke({"messages": [HumanMessage(content="Generate content for the fundamentals topic.")]})
+        response = teacher.invoke(
+            {
+                "messages": [
+                    HumanMessage(content="Generate content for the fundamentals topic.")
+                ]
+            }
+        )
         if "structured_response" in response:
             return response["structured_response"]
         else:
