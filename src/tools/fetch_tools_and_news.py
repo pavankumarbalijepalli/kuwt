@@ -12,6 +12,7 @@ import os
 
 r = redis.Redis.from_url(os.environ["REDIS_URL"])
 
+
 def fetch_news():
     """
     Fetch recent news articles related to AI advancements using the smol.ai news.
@@ -24,20 +25,41 @@ def fetch_news():
     )
     soup = BeautifulSoup(data.text, "html.parser")
     year_month = dt.now().strftime("%Y-%B")
-    latest_url = soup.find_all("div", id=f"{year_month}")[0].find_all("ul")[0].find_all("li")[0].find_all("a")[0]['href']
-    
-    title = soup.find_all("div", id=f"{year_month}")[0].find_all("ul")[0].find_all("li")[0].find_all('div', class_="font-semibold")[0].text.strip()
+    latest_url = (
+        soup.find_all("div", id=f"{year_month}")[0]
+        .find_all("ul")[0]
+        .find_all("li")[0]
+        .find_all("a")[0]["href"]
+    )
+
+    title = (
+        soup.find_all("div", id=f"{year_month}")[0]
+        .find_all("ul")[0]
+        .find_all("li")[0]
+        .find_all("div", class_="font-semibold")[0]
+        .text.strip()
+    )
     latest_data = requests.get(
         f"https://news.smol.ai{latest_url}", headers={"User-Agent": "Mozilla/5.0"}
     )
     soup = BeautifulSoup(latest_data.text, "html.parser")
     content = soup.find_all("main", id="main-content")[0].text
-    
-    summary = content.split('AI Reddit Recap')[0].split('AI Twitter Recap')[0].strip()
-    twitter_recap = content.split('AI Reddit Recap')[0].split('AI Twitter Recap')[-1].strip()
-    reddit_recap = content.split('AI Reddit Recap')[-1].split('Less Technical AI Subreddit Recap')[0].strip()
+
+    summary = content.split("AI Reddit Recap")[0].split("AI Twitter Recap")[0].strip()
+    twitter_recap = (
+        content.split("AI Reddit Recap")[0].split("AI Twitter Recap")[-1].strip()
+    )
+    reddit_recap = (
+        content.split("AI Reddit Recap")[-1]
+        .split("Less Technical AI Subreddit Recap")[0]
+        .strip()
+    )
     log(f"Fetched news article: {title}")
-    return {"latest_url": latest_url, "content": f"Title: {title}, Main Headlines: {summary}, Twitter Recap: {twitter_recap}, Reddit Recap: {reddit_recap}"}
+    return {
+        "latest_url": latest_url,
+        "content": f"Title: {title}, Main Headlines: {summary}, Twitter Recap: {twitter_recap}, Reddit Recap: {reddit_recap}",
+    }
+
 
 def fetch_tools():
     """
@@ -53,9 +75,7 @@ def fetch_tools():
 
     tools = pd.DataFrame()
 
-    titles = [
-        "Tool Name: " + name.find_all("span")[0].text for name in names
-    ]
+    titles = ["Tool Name: " + name.find_all("span")[0].text for name in names]
     urls = [name.find_all("a")[0]["href"] for name in names]
     trends = [
         int(trend.find_all("span")[-1].text.replace(",", ""))
@@ -103,6 +123,7 @@ def fetch_tools():
 
     return tools
 
+
 def fetch_repos():
     """
     Fetch trending GitHub repositories.
@@ -123,7 +144,7 @@ def fetch_repos():
             ]
         }
     )
-   
+
     for repo_link in repos["name"]:
         repo_url = f"https://www.github.com/{repo_link.replace('Repo Name: ', '')}"
         repo_data = requests.get(repo_url, headers={"User-Agent": "Mozilla/5.0"})
@@ -134,24 +155,30 @@ def fetch_repos():
     log("Fetched Top 3 trending repositories from GitHub.")
     return repos
 
+
 def fetch_news_repos():
-    covered = json.loads(r.get('covered'))
-    
+    covered = json.loads(r.get("covered"))
+
     news = fetch_news()
-    if news['latest_url'] in covered["news"]:
-        news = {"latest_url": news['latest_url'], "content": "No new news articles to fetch"}
+    if news["latest_url"] in covered["news"]:
+        news = {
+            "latest_url": news["latest_url"],
+            "content": "No new news articles to fetch",
+        }
     covered["news"].extend([news["latest_url"]])
-    
+
     repos = fetch_repos()[["name", "description"]].head(3)
     for item in covered["repos"]:
         repos = repos.drop(repos[repos["name"].str.contains(item)].index)
-    covered["repos"].extend(repos["name"].apply(lambda x: x.replace("Repo Name: ", "").strip()).tolist())
-    repos = {row['name']: row['description'] for _, row in repos.iterrows()}
-    
+    covered["repos"].extend(
+        repos["name"].apply(lambda x: x.replace("Repo Name: ", "").strip()).tolist()
+    )
+    repos = {row["name"]: row["description"] for _, row in repos.iterrows()}
+
     # tools = fetch_tools()[["name", "description"]]
     # for item in covered["tools"]:
     #     tools = tools.drop(tools[tools["name"].str.contains(item)].index)
     # covered["tools"].extend(tools["name"].apply(lambda x: x.replace("Tool Name: ", "").strip()).tolist())
-    
-    json.dump(covered, open("assets/input/covered.json", "w"), indent=4)
+
+    r.set("covered", json.dumps(covered))
     return news, repos
