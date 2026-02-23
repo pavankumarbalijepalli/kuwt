@@ -16,6 +16,7 @@ jobs:
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      REDIS_URL: ${{ secrets.REDIS_URL }}
     
     steps:
       - name: Checkout repo
