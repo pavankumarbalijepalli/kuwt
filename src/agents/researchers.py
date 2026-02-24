@@ -74,7 +74,7 @@ class Researchers:
 
     def run(self) -> ResearchersResponse:
         if not self.papers:
-            self.content = "No papers found for the given date."
+            # self.content = "No papers found for the given date."
             log("No papers found for the given date.")
             return self.content
         self.content = {}
@@ -101,7 +101,7 @@ class Researchers:
             sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
         self.save_content()
-        return True
+        return self.content
 
     def save_content(self):
         if not os.path.exists(f"assets/output/{self.date}"):

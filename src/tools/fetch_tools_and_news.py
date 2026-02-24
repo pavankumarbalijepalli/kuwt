@@ -161,10 +161,7 @@ def fetch_news_repos():
 
     news = fetch_news()
     if news["latest_url"] in covered["news"]:
-        news = {
-            "latest_url": news["latest_url"],
-            "content": "No new news articles to fetch",
-        }
+        news = {}
     covered["news"].extend([news["latest_url"]])
 
     repos = fetch_repos()[["name", "description"]].head(3)

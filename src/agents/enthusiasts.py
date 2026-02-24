@@ -74,12 +74,12 @@ class Enthusiasts:
 
     def run(self):
         raw_content = {
-            "news": {"news": {"content": self.news["content"]}},
+            "news": {"news": {"content": self.news.get("content", [])}},
             "repos": self.repos,
         }
-        if not raw_content["news"] and not raw_content["repos"]:
-            self.content = "No papers found for the given date."
-
+        if not raw_content["news"]['news']['content'] and not raw_content["repos"]:
+            self.content = "No news or repos found for the given date."
+            return self.content
         self.content = {"news": {}, "repos": {}}
 
         for topic_name, topic_dictionary in raw_content.items():
@@ -100,7 +100,7 @@ class Enthusiasts:
                     "instagram_post": instagram_response.model_dump(),
                     "youtube_video": youtube_response.model_dump(),
                 }
-            sleep(60)  # Sleep for 60 seconds to avoid rate limits
+                sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
         self.save_content()
         return self.content

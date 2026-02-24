@@ -15,6 +15,7 @@ class AgentOrchestrator:
         self.enthusiasts = Enthusiasts()
         self.teachers = Teachers()
         self.date = dt.now().strftime("%Y%m%d")
+        self.content = {"researchers": None, "enthusiasts": None, "teachers": None}
         log(f"Initialized Agent Orchestrator for date: {self.date}")
 
     def run(self):
@@ -25,16 +26,18 @@ class AgentOrchestrator:
             return
         log("Starting Agent Orchestrator...")
         log("Running Researchers Agent...")
-        self.researchers.run()
+        self.content['researchers'] = self.researchers.run()
         log("Running Enthusiasts Agent...")
-        self.enthusiasts.run()
+        self.content['enthusiasts'] = self.enthusiasts.run()
         log("Running Teachers Agent...")
-        self.teachers.run()
+        self.content['teachers'] = self.teachers.run()
         log("All agents have completed their tasks.")
 
     def prepare_researcher(self):
         log("Preparing content from Researchers Agent output...")
-        _json = json.load(open(f"assets/output/{self.date}/researchers.json"))
+        _json = self.content['researchers']
+        if not _json:
+            return None
         # Prepare Markdown formatted string
         papers_content = {}
         for paper in _json:
@@ -79,7 +82,9 @@ class AgentOrchestrator:
 
     def prepare_enthusiast(self):
         log("Preparing content from Enthusiasts Agent output...")
-        _json = json.load(open(f"assets/output/{self.date}/enthusiasts.json"))
+        _json = self.content['enthusiasts']
+        if not _json:
+            return None
         news = _json["news"]["news"]
         repos = _json["repos"]
 
@@ -103,7 +108,9 @@ class AgentOrchestrator:
 
     def prepare_teacher(self):
         log("Preparing content from Teachers Agent output...")
-        _json = json.load(open(f"assets/output/{self.date}/teachers.json"))
+        _json = self.content['teachers']
+        if not _json:
+            return None
         fundamentals_content = {}
         for key, value in _json.items():
             fundamentals_content[key] = ""
@@ -123,79 +130,90 @@ class AgentOrchestrator:
         news_content, repos_content = self.prepare_enthusiast()
         fundamentals_content = self.prepare_teacher()
 
-        # Today's Linkedin Posts
-        all_linkedin_posts = (
-            f"# RESEARCHER \n\n New AI Research Advancements as of {self.date}\n\n"
-        )
-        all_instagram_posts = "# RESEARCHER\n\n"
-        all_medium_posts = "# RESEARCHER\n\n"
-        all_youtube_posts = "# RESEARCHER\n\n"
-
-        log("Aggregating researcher content for email body...")
-        for paper in paper_content:
-            for key in paper_content[paper]:
-                if key == "linkedin":
-                    all_linkedin_posts += paper_content[paper][key]
-                    all_linkedin_posts += "<hr>\n\n"
-                elif key == "instagram":
-                    all_instagram_posts += paper_content[paper][key]
-                    all_instagram_posts += "<hr>\n\n"
-                elif key == "medium":
-                    all_medium_posts += paper_content[paper][key]
-                    all_medium_posts += "<hr>\n\n"
-                elif key == "youtube":
-                    all_youtube_posts += paper_content[paper][key]
-                    all_youtube_posts += "<hr>\n\n"
+        all_linkedin_posts = ""
+        all_instagram_posts = ""
+        all_medium_posts = ""
+        all_youtube_posts = ""
+        
+        if paper_content:
+            all_linkedin_posts = (
+                f"# RESEARCHER \n\n New AI Research Advancements as of {self.date}\n\n"
+            )
+            all_instagram_posts = "# RESEARCHER\n\n"
+            all_medium_posts = "# RESEARCHER\n\n"
+            all_youtube_posts = "# RESEARCHER\n\n"
+            # Today's Linkedin Posts
+            log("Aggregating researcher content for email body...")
+            for paper in paper_content:
+                for key in paper_content[paper]:
+                    if key == "linkedin":
+                        all_linkedin_posts += str(paper)
+                        all_linkedin_posts += paper_content[paper][key]
+                        all_linkedin_posts += "<hr>\n\n"
+                    elif key == "instagram":
+                        all_instagram_posts += paper_content[paper][key]
+                        all_instagram_posts += str(paper)
+                        all_instagram_posts += "<hr>\n\n"
+                    elif key == "medium":
+                        all_medium_posts += paper_content[paper][key]
+                        all_medium_posts += str(paper)
+                        all_medium_posts += "<hr>\n\n"
+                    elif key == "youtube":
+                        all_youtube_posts += paper_content[paper][key]
+                        all_youtube_posts += str(paper)
+                        all_youtube_posts += "<hr>\n\n"
 
         # Today's News
-        all_linkedin_posts += f"\n\n# ENTHUSIAST AI News as of {self.date}\n\n"
-        all_instagram_posts += "\n\n# ENTHUSIAST\n\n"
-        all_medium_posts += "\n\n# ENTHUSIAST\n\n"
-        all_youtube_posts += "\n\n# ENTHUSIAST\n\n"
+        if news_content:
+            all_linkedin_posts += f"\n\n# ENTHUSIAST AI News as of {self.date}\n\n"
+            all_instagram_posts += "\n\n# ENTHUSIAST\n\n"
+            all_medium_posts += "\n\n# ENTHUSIAST\n\n"
+            all_youtube_posts += "\n\n# ENTHUSIAST\n\n"
 
-        log("Aggregating enthusiast content for email body...")
-        for post in news_content:
-            if post == "linkedin_post":
-                all_linkedin_posts += news_content[post]
-                all_linkedin_posts += "<hr>\n\n"
-            elif post == "instagram_post":
-                all_instagram_posts += news_content[post]
-                all_instagram_posts += "<hr>\n\n"
-            elif post == "youtube_video":
-                all_youtube_posts += news_content[post]
-                all_youtube_posts += "<hr>\n\n"
-
-        for repo in repos_content:
-            for post in repos_content[repo]:
+            log("Aggregating enthusiast content for email body...")
+            for post in news_content:
                 if post == "linkedin_post":
-                    all_linkedin_posts += repos_content[repo][post]
+                    all_linkedin_posts += news_content[post]
                     all_linkedin_posts += "<hr>\n\n"
                 elif post == "instagram_post":
-                    all_instagram_posts += repos_content[repo][post]
+                    all_instagram_posts += news_content[post]
                     all_instagram_posts += "<hr>\n\n"
                 elif post == "youtube_video":
-                    all_youtube_posts += repos_content[repo][post]
+                    all_youtube_posts += news_content[post]
                     all_youtube_posts += "<hr>\n\n"
 
-        all_linkedin_posts += "\n\n# TEACHER\n\n"
-        all_instagram_posts += "\n\n# TEACHER\n\n"
-        all_medium_posts += "\n\n# TEACHER\n\n"
-        all_youtube_posts += "\n\n# TEACHER\n\n"
+            for repo in repos_content:
+                for post in repos_content[repo]:
+                    if post == "linkedin_post":
+                        all_linkedin_posts += repos_content[repo][post]
+                        all_linkedin_posts += "<hr>\n\n"
+                    elif post == "instagram_post":
+                        all_instagram_posts += repos_content[repo][post]
+                        all_instagram_posts += "<hr>\n\n"
+                    elif post == "youtube_video":
+                        all_youtube_posts += repos_content[repo][post]
+                        all_youtube_posts += "<hr>\n\n"
 
-        log("Aggregating teacher content for email body...")
-        for key in fundamentals_content:
-            if key == "linkedin_post":
-                all_linkedin_posts += fundamentals_content[key]
-                all_linkedin_posts += "<hr>\n\n"
-            elif key == "instagram_post":
-                all_instagram_posts += fundamentals_content[key]
-                all_instagram_posts += "<hr>\n\n"
-            elif key == "medium_post":
-                all_medium_posts += fundamentals_content[key]
-                all_medium_posts += "<hr>\n\n"
-            elif key == "youtube_post":
-                all_youtube_posts += fundamentals_content[key]
-                all_youtube_posts += "<hr>\n\n"
+
+        if fundamentals_content:
+            all_linkedin_posts += "\n\n# TEACHER\n\n"
+            all_instagram_posts += "\n\n# TEACHER\n\n"
+            all_medium_posts += "\n\n# TEACHER\n\n"
+            all_youtube_posts += "\n\n# TEACHER\n\n"
+            log("Aggregating teacher content for email body...")
+            for key in fundamentals_content:
+                if key == "linkedin_post":
+                    all_linkedin_posts += fundamentals_content[key]
+                    all_linkedin_posts += "<hr>\n\n"
+                elif key == "instagram_post":
+                    all_instagram_posts += fundamentals_content[key]
+                    all_instagram_posts += "<hr>\n\n"
+                elif key == "medium_post":
+                    all_medium_posts += fundamentals_content[key]
+                    all_medium_posts += "<hr>\n\n"
+                elif key == "youtube_post":
+                    all_youtube_posts += fundamentals_content[key]
+                    all_youtube_posts += "<hr>\n\n"
         return (
             all_linkedin_posts,
             all_instagram_posts,
@@ -205,18 +223,30 @@ class AgentOrchestrator:
 
     def send_email(self):
         linkedin_post, instagram_post, medium_post, youtube_post = self.prepare_body()
-        log("Sending email for Linkedin content...")
-        send_email(
-            full_post=markdown.markdown(linkedin_post), post_type="Linkedin Posts"
-        )
-        log("Sending email for Instagram content...")
-        send_email(
-            full_post=markdown.markdown(instagram_post), post_type="Instagram Posts"
-        )
-        log("Sending email for Medium content...")
-        send_email(full_post=markdown.markdown(medium_post), post_type="Medium Posts")
-        log("Sending email for Youtube content...")
-        send_email(full_post=markdown.markdown(youtube_post), post_type="Youtube Posts")
+        
+        if linkedin_post:
+            log("Sending email for Linkedin content...")
+            send_email(
+                full_post=markdown.markdown(linkedin_post), post_type="Linkedin Posts"
+            )
+        
+        if instagram_post:
+            log("Sending email for Instagram content...")
+            send_email(
+                full_post=markdown.markdown(instagram_post), post_type="Instagram Posts"
+            )
+        
+        if medium_post:
+            log("Sending email for Medium content...")
+            send_email(
+                full_post=markdown.markdown(medium_post), post_type="Medium Posts"
+            )
+        
+        if youtube_post:
+            log("Sending email for Youtube content...")
+            send_email(
+                full_post=markdown.markdown(youtube_post), post_type="Youtube Posts"
+            )
 
     def save_markdown(self):
         linkedin_post, instagram_post, medium_post, youtube_post = self.prepare_body()
@@ -236,4 +266,5 @@ if __name__ == "__main__":
     orchestrator = AgentOrchestrator()
     orchestrator.run()
     orchestrator.send_email()
-    # orchestrator.save_markdown()
+    orchestrator.save_markdown()
+    orchestrator.content['researchers'] = None
