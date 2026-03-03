@@ -17,7 +17,7 @@ class LinkedinNewsPost(BaseModel):
     hashtags: list[str] = Field(default_factory=list, description="Relevant hashtags")
     engagement_tips: str = Field(..., description="Tips for maximizing engagement")
     word_count: int = Field(
-        ..., description="Total word count (should be between 120–220)."
+        ..., description="Total word count (should be below 130)."
     )
 
 

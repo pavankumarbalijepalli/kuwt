@@ -26,7 +26,7 @@ class LinkedInResearchPost(BaseModel):
         ..., description="A short takeaway or reflective closing statement/question."
     )
     word_count: int = Field(
-        ..., description="Total word count (should be between 120–220)."
+        ..., description="Total word count (should be below 130)."
     )
     relavant_hashtags: str = Field(
         ..., description="5–7 relevant hashtags for the LinkedIn post."

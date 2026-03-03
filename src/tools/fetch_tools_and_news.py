@@ -25,7 +25,7 @@ def fetch_news():
     )
     soup = BeautifulSoup(data.text, "html.parser")
     year_month = dt.now().strftime("%Y-%B")
-    if len(soup.find_all("div", id=f"{year_month}")) < 0:
+    if len(soup.find_all("div", id=f"{year_month}")) < 1:
         return {
             "latest_url": None,
             "content": None,
@@ -151,12 +151,17 @@ def fetch_repos():
     )
 
     for repo_link in repos["name"]:
-        repo_url = f"https://www.github.com/{repo_link.replace('Repo Name: ', '')}"
-        repo_data = requests.get(repo_url, headers={"User-Agent": "Mozilla/5.0"})
-        repo_soup = BeautifulSoup(repo_data.text, "html.parser")
-        content = repo_soup.find("article").text.strip()
-        repos.loc[repos["name"] == repo_link, "description"] = content
-    repos["length"] = repos["description"].apply(lambda x: len(x) if x else 0)
+        try:
+            repo_url = f"https://www.github.com/{repo_link.replace('Repo Name: ', '')}"
+            repo_data = requests.get(repo_url, headers={"User-Agent": "Mozilla/5.0"})
+            repo_soup = BeautifulSoup(repo_data.text, "html.parser")
+            content = repo_soup.find("article").text.strip()
+            repos.loc[repos["name"] == repo_link, "description"] = content
+        except Exception as e:
+            log(f"Unable to process: {repo_url}")
+            log(str(e))
+    
+    repos["length"] = repos["description"].apply(lambda x: len(x) if x == str(x) else 0)
     log("Fetched Top 3 trending repositories from GitHub.")
     return repos
 

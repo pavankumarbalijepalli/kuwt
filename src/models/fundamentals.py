@@ -85,7 +85,7 @@ class LinkedinResponse(BaseModel):
         ..., description="5–7 relevant hashtags for the LinkedIn article."
     )
     word_count: int = Field(
-        ..., description="Total word count (should be between 120–220)."
+        ..., description="Total word count (should be below 130)."
     )
 
 
