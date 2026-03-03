@@ -5,7 +5,6 @@ from utils.email_handler import send_email
 from datetime import datetime as dt
 from utils.logger import log
 import markdown
-import json
 import os
 
 
@@ -266,5 +265,4 @@ if __name__ == "__main__":
     orchestrator = AgentOrchestrator()
     orchestrator.run()
     orchestrator.send_email()
-    orchestrator.save_markdown()
-    orchestrator.content['researchers'] = None
+    # orchestrator.save_markdown()

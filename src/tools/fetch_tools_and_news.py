@@ -25,6 +25,11 @@ def fetch_news():
     )
     soup = BeautifulSoup(data.text, "html.parser")
     year_month = dt.now().strftime("%Y-%B")
+    if len(soup.find_all("div", id=f"{year_month}")) < 0:
+        return {
+            "latest_url": None,
+            "content": None,
+        }
     latest_url = (
         soup.find_all("div", id=f"{year_month}")[0]
         .find_all("ul")[0]
@@ -160,9 +165,10 @@ def fetch_news_repos():
     covered = json.loads(r.get("covered"))
 
     news = fetch_news()
-    if news["latest_url"] in covered["news"]:
-        news = {}
-    covered["news"].extend([news["latest_url"]])
+    if news['latest_url']:
+        if news["latest_url"] in covered["news"]:
+            news = {}
+        covered["news"].extend([news["latest_url"]])
 
     repos = fetch_repos()[["name", "description"]].head(3)
     for item in covered["repos"]:
