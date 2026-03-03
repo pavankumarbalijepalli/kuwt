@@ -1,6 +1,7 @@
 from pathlib import Path
 import streamlit as st
 import os
+import sys
 
 # Configure page layout
 st.set_page_config(layout="wide", page_title="Agent Control Panel")
@@ -8,8 +9,13 @@ st.set_page_config(layout="wide", page_title="Agent Control Panel")
 # Title
 st.title("Agent Control Panel")
 
+# Ensure `src/` is on sys.path so `agents.*` imports work regardless of CWD.
+SRC_DIR = Path(__file__).resolve().parent
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
+
 # Get agents from the agents folder
-agents_folder = Path("agents")
+agents_folder = SRC_DIR / "agents"
 agents = []
 
 if agents_folder.exists():

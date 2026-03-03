@@ -4,8 +4,12 @@ from agents.teachers import Teachers
 from utils.email_handler import send_email
 from datetime import datetime as dt
 from utils.logger import log
-import markdown
+from utils.paths import ASSETS_OUTPUT_DIR
 import os
+
+from rendering.normalize import build_platform_cards
+from rendering.email_renderer import render_platform_email_html
+from utils.email_handler import KUNDELU_AI_PNG_URL
 
 
 class AgentOrchestrator:
@@ -18,11 +22,11 @@ class AgentOrchestrator:
         log(f"Initialized Agent Orchestrator for date: {self.date}")
 
     def run(self):
-        if os.path.exists(f"assets/output/{self.date}"):
-            log(
-                f"Output for date {self.date} already exists. Skipping agent execution."
-            )
-            return
+        # if (ASSETS_OUTPUT_DIR / self.date).exists():
+        #     log(
+        #         f"Output for date {self.date} already exists. Skipping agent execution."
+        #     )
+        #     return
         log("Starting Agent Orchestrator...")
         log("Running Researchers Agent...")
         self.content['researchers'] = self.researchers.run()
@@ -32,233 +36,48 @@ class AgentOrchestrator:
         self.content['teachers'] = self.teachers.run()
         log("All agents have completed their tasks.")
 
-    def prepare_researcher(self):
-        log("Preparing content from Researchers Agent output...")
-        _json = self.content['researchers']
-        if not _json:
-            return None
-        # Prepare Markdown formatted string
-        papers_content = {}
-        for paper in _json:
-            papers_content[paper] = {}
-            for key, value in _json[paper].items():
-                if key == "linkedin_post":
-                    linkedin = _json[paper][key]
-                    linkedin_content = ""
-                    for title, content in linkedin.items():
-                        if isinstance(content, dict):
-                            linkedin_content += f"{content['content']}\n\n"
-                    papers_content[paper]["linkedin"] = linkedin_content
-                elif key == "instagram_post":
-                    instagram = _json[paper][key]
-                    instagram_content = ""
-                    for title, content in instagram.items():
-                        if isinstance(content, dict):
-                            instagram_content += (
-                                f"## {title.upper()}\n{content['content']}\n\n"
-                            )
-                    papers_content[paper]["instagram"] = instagram_content
-                elif key == "medium_post":
-                    medium = _json[paper][key]
-                    medium_content = ""
-                    for title, content in medium.items():
-                        if isinstance(content, dict):
-                            medium_content += (
-                                f"## {title.upper()}\n{content['content']}\n\n"
-                            )
-                    papers_content[paper]["medium"] = medium_content
-                elif key == "youtube_post":
-                    youtube = _json[paper][key]
-                    youtube_content = ""
-                    for title, content in youtube.items():
-                        if isinstance(content, dict):
-                            youtube_content += (
-                                f"## {title.upper()}\n{content['content']}\n\n"
-                            )
-                    papers_content[paper]["youtube"] = youtube_content
-        log("Prepared content from Researchers Agent output.")
-        return papers_content
-
-    def prepare_enthusiast(self):
-        log("Preparing content from Enthusiasts Agent output...")
-        _json = self.content['enthusiasts']
-        if not _json:
-            return None
-        news = _json["news"]["news"]
-        repos = _json["repos"]
-
-        news_content = {}
-        for post, content in news.items():
-            news_content[post] = ""
-            for title, value in content.items():
-                news_content[post] += f"## {title.upper()}\n{value}\n\n"
-
-        repos_content = {}
-        for repo, content in repos.items():
-            repos_content[repo] = {}
-            for title, value in content.items():
-                repos_content[repo][title] = ""
-                for sub_title, sub_value in value.items():
-                    repos_content[repo][title] += (
-                        f"## {sub_title.upper()}\n{sub_value}\n\n"
-                    )
-        log("Prepared content from Enthusiasts Agent output.")
-        return news_content, repos_content
-
-    def prepare_teacher(self):
-        log("Preparing content from Teachers Agent output...")
-        _json = self.content['teachers']
-        if not _json:
-            return None
-        fundamentals_content = {}
-        for key, value in _json.items():
-            fundamentals_content[key] = ""
-            for title, content in value.items():
-                if title in ["walkthrough_code", "hashtags"]:
-                    fundamentals_content[key] += (
-                        f"## {title.upper()}\n```\n{content}\n```\n\n"
-                    )
-                else:
-                    fundamentals_content[key] += f"## {title.upper()}\n{content}\n\n"
-        log("Prepared content from Teachers Agent output.")
-        return fundamentals_content
-
-    def prepare_body(self):
-        log("Preparing email body content...")
-        paper_content = self.prepare_researcher()
-        news_content, repos_content = self.prepare_enthusiast()
-        fundamentals_content = self.prepare_teacher()
-
-        all_linkedin_posts = ""
-        all_instagram_posts = ""
-        all_medium_posts = ""
-        all_youtube_posts = ""
-        
-        if paper_content:
-            all_linkedin_posts = (
-                f"# RESEARCHER \n\n New AI Research Advancements as of {self.date}\n\n"
-            )
-            all_instagram_posts = "# RESEARCHER\n\n"
-            all_medium_posts = "# RESEARCHER\n\n"
-            all_youtube_posts = "# RESEARCHER\n\n"
-            # Today's Linkedin Posts
-            log("Aggregating researcher content for email body...")
-            for paper in paper_content:
-                for key in paper_content[paper]:
-                    if key == "linkedin":
-                        all_linkedin_posts += str(paper)
-                        all_linkedin_posts += paper_content[paper][key]
-                        all_linkedin_posts += "<hr>\n\n"
-                    elif key == "instagram":
-                        all_instagram_posts += paper_content[paper][key]
-                        all_instagram_posts += str(paper)
-                        all_instagram_posts += "<hr>\n\n"
-                    elif key == "medium":
-                        all_medium_posts += paper_content[paper][key]
-                        all_medium_posts += str(paper)
-                        all_medium_posts += "<hr>\n\n"
-                    elif key == "youtube":
-                        all_youtube_posts += paper_content[paper][key]
-                        all_youtube_posts += str(paper)
-                        all_youtube_posts += "<hr>\n\n"
-
-        # Today's News
-        if news_content:
-            all_linkedin_posts += f"\n\n# ENTHUSIAST AI News as of {self.date}\n\n"
-            all_instagram_posts += "\n\n# ENTHUSIAST\n\n"
-            all_medium_posts += "\n\n# ENTHUSIAST\n\n"
-            all_youtube_posts += "\n\n# ENTHUSIAST\n\n"
-
-            log("Aggregating enthusiast content for email body...")
-            for post in news_content:
-                if post == "linkedin_post":
-                    all_linkedin_posts += news_content[post]
-                    all_linkedin_posts += "<hr>\n\n"
-                elif post == "instagram_post":
-                    all_instagram_posts += news_content[post]
-                    all_instagram_posts += "<hr>\n\n"
-                elif post == "youtube_video":
-                    all_youtube_posts += news_content[post]
-                    all_youtube_posts += "<hr>\n\n"
-
-            for repo in repos_content:
-                for post in repos_content[repo]:
-                    if post == "linkedin_post":
-                        all_linkedin_posts += repos_content[repo][post]
-                        all_linkedin_posts += "<hr>\n\n"
-                    elif post == "instagram_post":
-                        all_instagram_posts += repos_content[repo][post]
-                        all_instagram_posts += "<hr>\n\n"
-                    elif post == "youtube_video":
-                        all_youtube_posts += repos_content[repo][post]
-                        all_youtube_posts += "<hr>\n\n"
-
-
-        if fundamentals_content:
-            all_linkedin_posts += "\n\n# TEACHER\n\n"
-            all_instagram_posts += "\n\n# TEACHER\n\n"
-            all_medium_posts += "\n\n# TEACHER\n\n"
-            all_youtube_posts += "\n\n# TEACHER\n\n"
-            log("Aggregating teacher content for email body...")
-            for key in fundamentals_content:
-                if key == "linkedin_post":
-                    all_linkedin_posts += fundamentals_content[key]
-                    all_linkedin_posts += "<hr>\n\n"
-                elif key == "instagram_post":
-                    all_instagram_posts += fundamentals_content[key]
-                    all_instagram_posts += "<hr>\n\n"
-                elif key == "medium_post":
-                    all_medium_posts += fundamentals_content[key]
-                    all_medium_posts += "<hr>\n\n"
-                elif key == "youtube_post":
-                    all_youtube_posts += fundamentals_content[key]
-                    all_youtube_posts += "<hr>\n\n"
-        return (
-            all_linkedin_posts,
-            all_instagram_posts,
-            all_medium_posts,
-            all_youtube_posts,
+    def send_email(self):
+        cards_by_platform = build_platform_cards(
+            researchers=self.content.get("researchers"),
+            enthusiasts=self.content.get("enthusiasts"),
+            teachers=self.content.get("teachers"),
         )
 
-    def send_email(self):
-        linkedin_post, instagram_post, medium_post, youtube_post = self.prepare_body()
-        
-        if linkedin_post:
-            log("Sending email for Linkedin content...")
-            send_email(
-                full_post=markdown.markdown(linkedin_post), post_type="Linkedin Posts"
+        for platform, post_type in [
+            ("linkedin", "Linkedin Posts"),
+            ("instagram", "Instagram Posts"),
+            ("medium", "Medium Posts"),
+            ("youtube", "Youtube Posts"),
+        ]:
+            cards = cards_by_platform.get(platform) or []
+            if not cards:
+                continue
+
+            log(f"Sending email for {platform} content...")
+            html = render_platform_email_html(
+                platform=platform,
+                date=self.date,
+                cards=cards,
+                kundelu_ai_png_url=KUNDELU_AI_PNG_URL,
             )
-        
-        if instagram_post:
-            log("Sending email for Instagram content...")
-            send_email(
-                full_post=markdown.markdown(instagram_post), post_type="Instagram Posts"
-            )
-        
-        if medium_post:
-            log("Sending email for Medium content...")
-            send_email(
-                full_post=markdown.markdown(medium_post), post_type="Medium Posts"
-            )
-        
-        if youtube_post:
-            log("Sending email for Youtube content...")
-            send_email(
-                full_post=markdown.markdown(youtube_post), post_type="Youtube Posts"
-            )
+            send_email(full_post=html, post_type=post_type)
 
     def save_markdown(self):
-        linkedin_post, instagram_post, medium_post, youtube_post = self.prepare_body()
-        if not os.path.exists(f"assets/output/{self.date}"):
-            os.makedirs(f"assets/output/{self.date}")
-        with open(f"assets/output/{self.date}/linkedin.md", "w") as f:
-            f.write(linkedin_post)
-        with open(f"assets/output/{self.date}/instagram.md", "w") as f:
-            f.write(instagram_post)
-        with open(f"assets/output/{self.date}/medium.md", "w") as f:
-            f.write(medium_post)
-        with open(f"assets/output/{self.date}/youtube.md", "w") as f:
-            f.write(youtube_post)
+        cards_by_platform = build_platform_cards(
+            researchers=self.content.get("researchers"),
+            enthusiasts=self.content.get("enthusiasts"),
+            teachers=self.content.get("teachers"),
+        )
+        out_dir = ASSETS_OUTPUT_DIR / self.date
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        for platform in ["linkedin", "instagram", "medium", "youtube"]:
+            cards = cards_by_platform.get(platform) or []
+            if not cards:
+                continue
+            md = "\n\n---\n\n".join([f"## {c.title}\n\n{c.markdown}" for c in cards])
+            with (out_dir / f"{platform}.md").open("w", encoding="utf-8") as f:
+                f.write(md)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@
 **KUWT** is an AI-powered content generation automation platform designed to keep technology enthusiasts and learners up-to-date with the latest developments in AI and technology. This project automatically generates high-quality, platform-specific educational content on technology topics for multiple channels including YouTube, LinkedIn, Instagram, and Medium.
 
 The platform uses intelligent agents powered by LLMs (Large Language Models) to:
+
 - Fetch and analyze trending research papers, technology news, and GitHub repositories
 - Generate engaging, educational content tailored to each platform's audience and format
 - Maintain consistency in messaging while adapting to platform-specific requirements
@@ -25,7 +26,7 @@ The platform uses intelligent agents powered by LLMs (Large Language Models) to:
 ## Features
 
 - 🤖 **Three Specialized Agents**: Researchers, Teachers, and Enthusiasts agents for different content types
-- 📰 **Automated Data Collection**: 
+- 📰 **Automated Data Collection**:
   - Fetches trending research papers from Hugging Face
   - Aggregates technology news and AI developments
   - Discovers trending GitHub repositories
@@ -45,6 +46,7 @@ The platform uses intelligent agents powered by LLMs (Large Language Models) to:
 ### Prerequisites
 
 - Python 3.11+
+
 - Git
 - Google Gemini API key (for LLM functionality)
 - SMTP email credentials (for email distribution)
@@ -53,23 +55,26 @@ The platform uses intelligent agents powered by LLMs (Large Language Models) to:
 ### Quick Start
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
-cd air-kai-content
+cd air-kuwt
 ```
 
-2. Create a Python virtual environment:
+1. Create a Python virtual environment:
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
-3. Install dependencies:
+1. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Configure environment variables:
+1. Configure environment variables:
 
 Create a `.env` file in the project root with the following variables:
 
@@ -90,9 +95,10 @@ RECIPIENT_EMAIL=<recipient-email@example.com>
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
-5. Prepare input data:
-   - Create `src/assets/input/fundamentals.json` with topic definitions
-   - Create `src/assets/input/covered.json` to track covered content (optional)
+1. Prepare input data:
+
+- Create `src/assets/input/fundamentals.json` with topic definitions
+- Create `src/assets/input/covered.json` to track covered content (optional)
 
 ## Usage
 
@@ -101,8 +107,7 @@ OLLAMA_BASE_URL=http://localhost:11434
 Execute the complete workflow with agent orchestration and email distribution:
 
 ```bash
-cd src
-python main.py
+python src/main.py
 ```
 
 This will:
@@ -118,10 +123,11 @@ This will:
 Start the interactive Streamlit control panel to interact with agents individually:
 
 ```bash
-python src/app.py
+streamlit run src/app.py
 ```
 
 This opens a web interface where you can:
+
 - Select specific agents (Researchers, Teachers, or Enthusiasts)
 - Configure content parameters
 - Execute individual agent workflows
@@ -133,9 +139,9 @@ This opens a web interface where you can:
 You can also import and use agents directly in Python scripts:
 
 ```python
-from src.agents.researchers import Researchers
-from src.agents.teachers import Teachers
-from src.agents.enthusiasts import Enthusiasts
+from agents.researchers import Researchers
+from agents.teachers import Teachers
+from agents.enthusiasts import Enthusiasts
 
 # Initialize agents
 researchers = Researchers()
@@ -150,8 +156,8 @@ enthusiasts.run()
 
 ## Project Architecture
 
-```
-air-kai-content/
+```text
+air-kuwt/
 ├── README.md
 ├── requirements.txt
 ├── src/
@@ -203,7 +209,9 @@ air-kai-content/
 The system uses three specialized agents that work together to create comprehensive technology content:
 
 ### 1. **Researchers Agent**
+
 Analyzes academic research papers and generates technical, research-focused content:
+
 - **Input**: Trending research papers from Hugging Face and academic sources
 - **Output Formats**:
   - **LinkedIn**: Professional research posts with key findings and implications
@@ -212,7 +220,9 @@ Analyzes academic research papers and generates technical, research-focused cont
   - **Instagram**: Short, visual-friendly script snippets with key takeaways
 
 ### 2. **Teachers Agent**
+
 Creates educational content focused on fundamental concepts and learning:
+
 - **Input**: Core AI/technology fundamentals and topics
 - **Output Formats**:
   - **LinkedIn**: Professional educational posts with progressive learning paths
@@ -221,7 +231,9 @@ Creates educational content focused on fundamental concepts and learning:
   - **Instagram**: Bite-sized learning tips and concept visualizations
 
 ### 3. **Enthusiasts Agent**
+
 Generates community-focused content from technology news and trending repositories:
+
 - **Input**: Technology news, GitHub trending repositories, and community discussions
 - **Output Formats**:
   - **LinkedIn**: Engaging posts about trending tools and news
@@ -232,6 +244,7 @@ Generates community-focused content from technology news and trending repositori
 ## Agent Orchestrator
 
 The `AgentOrchestrator` in [src/main.py](src/main.py) coordinates all three agents:
+
 - Executes agents sequentially to generate daily content
 - Aggregates output from all agents into platform-specific formats
 - Prepares email notifications with generated content
@@ -242,6 +255,7 @@ The `AgentOrchestrator` in [src/main.py](src/main.py) coordinates all three agen
 Each agent produces structured JSON output containing content for all platforms. The output is organized by date in the `src/assets/output/` directory:
 
 ### Researchers Agent Output (`researchers.json`)
+
 ```json
 {
   "paper_title": {
@@ -254,6 +268,7 @@ Each agent produces structured JSON output containing content for all platforms.
 ```
 
 ### Teachers Agent Output (`teachers.json`)
+
 ```json
 {
   "topic_name": {
@@ -266,6 +281,7 @@ Each agent produces structured JSON output containing content for all platforms.
 ```
 
 ### Enthusiasts Agent Output (`enthusiasts.json`)
+
 ```json
 {
   "news": {
@@ -288,7 +304,9 @@ Each agent produces structured JSON output containing content for all platforms.
 ```
 
 ### Email Distribution
+
 The orchestrator aggregates content from all three agents into four platform-specific emails:
+
 1. **LinkedIn Posts** - Professional, research-focused content
 2. **Instagram Posts** - Visual, engaging, short-form content
 3. **Medium Posts** - In-depth, long-form articles
@@ -297,39 +315,44 @@ The orchestrator aggregates content from all three agents into four platform-spe
 ## Todos & Roadmap
 
 ### High Priority
-- [ ] Enhance content quality validation and review workflow
-- [ ] Implement comprehensive error handling and retry logic for API failures
-- [ ] Add scheduling system for daily automated runs (cron/APScheduler)
-- [ ] Create content tracking system to avoid duplicates and repetition
-- [ ] Improve email templates with better formatting and branding
+
+- Enhance content quality validation and review workflow
+- Implement comprehensive error handling and retry logic for API failures
+- Add scheduling system for daily automated runs (cron/APScheduler)
+- Create content tracking system to avoid duplicates and repetition
+- Improve email templates with better formatting and branding
 
 ### Medium Priority
-- [ ] Add unit tests for all agent workflows
-- [ ] Implement detailed logging and monitoring for production deployment
-- [ ] Create dashboard for content performance analytics
-- [ ] Add content review/approval workflow before email distribution
-- [ ] Implement content caching to reduce API calls
-- [ ] Support for additional LLM backends (OpenAI, Claude, etc.)
+
+- Add unit tests for all agent workflows
+- Implement detailed logging and monitoring for production deployment
+- Create dashboard for content performance analytics
+- Add content review/approval workflow before email distribution
+- Implement content caching to reduce API calls
+- Support for additional LLM backends (OpenAI, Claude, etc.)
 
 ### Low Priority
-- [ ] Support for additional platforms (TikTok, Twitter/X, Bluesky, Reddit)
-- [ ] Multi-language content generation
-- [ ] Advanced content personalization by audience segment
-- [ ] Integration with third-party publishing platforms (Buffer, Hootsuite)
-- [ ] ML-based optimal posting time calculation
-- [ ] Advanced analytics for engagement metrics
+
+- Support for additional platforms (TikTok, Twitter/X, Bluesky, Reddit)
+- Multi-language content generation
+- Advanced content personalization by audience segment
+- Integration with third-party publishing platforms (Buffer, Hootsuite)
+- ML-based optimal posting time calculation
+- Advanced analytics for engagement metrics
 
 ### Code Quality
-- [ ] Add comprehensive docstrings to all modules
-- [ ] Implement configuration management system (config.yaml/environment variables)
-- [ ] Add dependency injection for cleaner LLM backend integration
-- [ ] Create comprehensive API/module documentation
-- [ ] Refactor email handling for better template management
-- [ ] Add type hints throughout codebase
+
+- Add comprehensive docstrings to all modules
+- Implement configuration management system (config.yaml/environment variables)
+- Add dependency injection for cleaner LLM backend integration
+- Create comprehensive API/module documentation
+- Refactor email handling for better template management
+- Add type hints throughout codebase
 
 ## Technology Stack
 
 ### Core Dependencies
+
 - **LangChain** (`langchain-core`, `langchain-ollama`, `langsmith`) - Agent and LLM orchestration framework
 - **Pydantic** - Data validation and structured output with `response_format`
 - **Hugging Face Hub** - Access to research papers and model cards
@@ -337,17 +360,20 @@ The orchestrator aggregates content from all three agents into four platform-spe
 - **PDF Processing** (`pypdf`, `PyPDF2`) - Extract text from research papers
 
 ### Content Generation & Audio
+
 - **Transformers** - NLP models for embeddings and analysis
 - **TorchData/TorchTune** - PyTorch utilities for efficient data handling
 - **Kokoro** - AI voice synthesis for potential audio content
 - **SoundFile** - Audio file I/O utilities
 
 ### Integration & Communication
+
 - **Requests** - HTTP library for API calls
 - **python-dotenv** - Environment variable management
 - **secure-smtplib** - Secure email distribution
 
 ### Development
+
 - **Markdown** - Processing markdown formatted content
 - **LangSmith** - Debugging and monitoring for LangChain workflows
 

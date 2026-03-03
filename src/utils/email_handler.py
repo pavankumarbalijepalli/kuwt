@@ -1,9 +1,10 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from markdown import markdown
 from datetime import datetime as dt
 import os
+
+KUNDELU_AI_PNG_URL = "https://raw.githubusercontent.com/pavankumarbalijepalli/pavankumarbalijepalli/refs/heads/main/kundelu_ai.png"
 
 email_template = """<!DOCTYPE html>
 <html lang="en">
@@ -147,9 +148,9 @@ email_template = """<!DOCTYPE html>
 
     <div class="section">
       <h2 style="color:#02b875;">Your Daily {post_type} Content</h2>
-      <p>
+      <div>
         {full_post}
-      </p>
+      </div>
     </div>
 
     <div class="divider"></div>
@@ -168,11 +169,15 @@ email_template = """<!DOCTYPE html>
 
 """
 
-def send_email(post_type, full_post):
+def send_email(post_type: str, full_post: str) -> None:
     # Email credentials
     sender_email = os.getenv("EMAIL_FROM")
     app_password = os.getenv("EMAIL_PASSWORD")
     receiver_email = os.getenv("EMAIL_TO")
+    if not sender_email or not app_password or not receiver_email:
+        raise RuntimeError(
+            "Missing email configuration. Please set EMAIL_FROM, EMAIL_PASSWORD, EMAIL_TO."
+        )
 
     # Create the email
     msg = MIMEMultipart("alternative")
@@ -185,7 +190,7 @@ def send_email(post_type, full_post):
     html = email_template.format(
         post_type=post_type,
         full_post=full_post,
-        kundelu_ai="https://raw.githubusercontent.com/pavankumarbalijepalli/pavankumarbalijepalli/refs/heads/main/kundelu_ai.png"
+        kundelu_ai=KUNDELU_AI_PNG_URL
     )
 
     # msg.attach(MIMEText(text, "plain"))

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KUWT – Daily Digest</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #faf7ff;
+      font-family: 'Merriweather', 'Segoe UI', Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 6px 25px rgba(155, 123, 255, 0.15);
+      overflow: hidden;
+      border: 1px solid #f2e6ff;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #dba7ff, #9b7bff);
+      color: #fff;
+      text-align: center;
+      padding: 32px 16px;
+      border-bottom: 4px solid #f9b9e1;
+    }
+
+    .header img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      margin-bottom: 10px;
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.4);
+    }
+
+    .header h1 {
+      font-size: 26px;
+      margin: 8px 0 4px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .header p {
+      font-size: 14px;
+      margin: 0;
+      color: #f9eaff;
+    }
+
+    .section {
+      padding: 26px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin: 0 0 14px;
+      color: var(--accent, #02b875);
+    }
+
+    .meta {
+      font-size: 12px;
+      color: #777;
+      margin: 0 0 18px;
+    }
+
+    .card {
+      border: 1px solid #eee;
+      border-radius: 14px;
+      padding: 18px 18px 14px;
+      margin: 0 0 14px;
+      background: #fff;
+    }
+
+    .card h3 {
+      margin: 0 0 4px;
+      font-size: 16px;
+      color: #1d093c;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(155, 123, 255, 0.12);
+      color: #5c3fd9;
+      margin: 6px 0 0;
+    }
+
+    .content {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #333;
+      margin-top: 12px;
+    }
+
+    .content h1, .content h2, .content h3, .content h4 {
+      color: #1d093c;
+      margin: 14px 0 8px;
+      font-size: 14px;
+    }
+
+    .content ul {
+      margin: 8px 0 8px 18px;
+      padding: 0;
+    }
+
+    .content code {
+      background: #f6f2ff;
+      padding: 2px 5px;
+      border-radius: 6px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+    }
+
+    .content pre {
+      background: #12062b;
+      color: #f3ecff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .content pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .divider {
+      border-top: 1px solid #eee;
+    }
+
+    .footer {
+      background-color: #1d093c;
+      text-align: center;
+      padding: 22px;
+      color: #c7b6ff;
+      font-size: 12px;
+    }
+
+    .footer a {
+      color: #f9b9e1;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="{{ kundelu_ai }}" alt="Kundelu AI"/>
+      <h1>Kundelu AI Digest</h1>
+      <p>Curated by K.U.W.T Multi Agent Orchestrator</p>
+    </div>
+
+    <div class="section" style="--accent: {% block accent %}#02b875{% endblock %};">
+      {% block content %}{% endblock %}
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="footer">
+      <p>© 2025 Kundelu AI | Created by Pavan Kumar Balijepalli</p>
+      <p>
+        <a href="https://www.linkedin.com/in/pavan-kumar-balijepalli/">LinkedIn</a> •
+        <a href="https://medium.com/@pavanbalijepalli.bits">Medium</a> •
+        <a href="https://youtube.com/@kundelu-ai">YouTube</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
+

@@ -16,6 +16,7 @@ from prompts.papers import PAPERS_PROMPT
 from tools.fetch_papers import get_papers
 from datetime import datetime as dt
 from utils.logger import log
+from utils.paths import ASSETS_OUTPUT_DIR
 import json
 
 llm = get_gemini_model("RESEARCHER_GEMINI")
@@ -70,7 +71,7 @@ class Researchers:
                 log(
                     f"Agent {researcher.name} failed. Retrying... ({3 - retries + 1}/3)"
                 )
-                return self.run_researcher(researcher, retries - 1)
+                return self.run_researcher(paper, researcher, retries - 1)
 
     def run(self) -> ResearchersResponse:
         if not self.papers:
@@ -104,8 +105,8 @@ class Researchers:
         return self.content
 
     def save_content(self):
-        if not os.path.exists(f"assets/output/{self.date}"):
-            os.makedirs(f"assets/output/{self.date}")
-        filename = f"assets/output/{self.date}/researchers.json"
-        json.dump(self.content, open(filename, "w"), indent=4)
+        out_dir = ASSETS_OUTPUT_DIR / self.date
+        out_dir.mkdir(parents=True, exist_ok=True)
+        filename = out_dir / "researchers.json"
+        json.dump(self.content, filename.open("w", encoding="utf-8"), indent=4)
         log(f"Content saved to {filename}")

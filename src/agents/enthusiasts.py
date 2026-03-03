@@ -17,6 +17,7 @@ from models.tools_and_news import (
 from prompts.tools_and_news import TOOLS_AND_NEWS_PROMPT
 from tools.fetch_tools_and_news import fetch_news_repos
 from utils.logger import log
+from utils.paths import ASSETS_OUTPUT_DIR
 
 llm = get_gemini_model(user="ENTHUSIAST_GEMINI")
 
@@ -106,8 +107,8 @@ class Enthusiasts:
         return self.content
 
     def save_content(self):
-        if not os.path.exists(f"assets/output/{self.date}"):
-            os.makedirs(f"assets/output/{self.date}")
-        filename = f"assets/output/{self.date}/enthusiasts.json"
-        json.dump(self.content, open(filename, "w"), indent=4)
+        out_dir = ASSETS_OUTPUT_DIR / self.date
+        out_dir.mkdir(parents=True, exist_ok=True)
+        filename = out_dir / "enthusiasts.json"
+        json.dump(self.content, filename.open("w", encoding="utf-8"), indent=4)
         log(f"Content saved to {filename}")

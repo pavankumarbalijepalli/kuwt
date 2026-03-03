@@ -15,6 +15,7 @@ from prompts.fundamentals import FUNDAMENTALS_PROMPT
 from tools.fetch_topics import fetch_topics
 from datetime import datetime as dt
 from utils.logger import log
+from utils.paths import ASSETS_OUTPUT_DIR
 import json
 
 llm = get_gemini_model("TEACHER_GEMINI")
@@ -95,8 +96,8 @@ class Teachers:
         return self.content
 
     def save_content(self):
-        if not os.path.exists(f"assets/output/{self.date}"):
-            os.makedirs(f"assets/output/{self.date}")
-        filename = f"assets/output/{self.date}/teachers.json"
-        json.dump(self.content, open(filename, "w"), indent=4)
+        out_dir = ASSETS_OUTPUT_DIR / self.date
+        out_dir.mkdir(parents=True, exist_ok=True)
+        filename = out_dir / "teachers.json"
+        json.dump(self.content, filename.open("w", encoding="utf-8"), indent=4)
         log(f"Content saved to {filename}")

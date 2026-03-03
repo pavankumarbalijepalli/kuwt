@@ -10,7 +10,22 @@ from utils.logger import log
 import redis
 import os
 
-r = redis.Redis.from_url(os.environ["REDIS_URL"])
+DEFAULT_HTTP_TIMEOUT_S = 30
+
+
+def _get_redis() -> redis.Redis:
+    redis_url = os.getenv("REDIS_URL")
+    if not redis_url:
+        raise RuntimeError("REDIS_URL environment variable is required.")
+    return redis.Redis.from_url(redis_url)
+
+
+def _loads_maybe_bytes(value):
+    if value is None:
+        return None
+    if isinstance(value, (bytes, bytearray)):
+        value = value.decode("utf-8")
+    return json.loads(value)
 
 
 def fetch_news():
@@ -20,9 +35,19 @@ def fetch_news():
         A string containing the formatted news content.
     """
     log("Fetching news from smol.ai...")
-    data = requests.get(
-        "https://news.smol.ai/issues", headers={"User-Agent": "Mozilla/5.0"}
-    )
+    try:
+        data = requests.get(
+            "https://news.smol.ai/issues",
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=DEFAULT_HTTP_TIMEOUT_S,
+        )
+        data.raise_for_status()
+    except Exception as e:
+        log(f"Failed to fetch smol.ai issues: {e}")
+        return {
+            "latest_url": None,
+            "content": None,
+        }
     soup = BeautifulSoup(data.text, "html.parser")
     year_month = dt.now().strftime("%Y-%B")
     if len(soup.find_all("div", id=f"{year_month}")) < 1:
@@ -44,9 +69,19 @@ def fetch_news():
         .find_all("div", class_="font-semibold")[0]
         .text.strip()
     )
-    latest_data = requests.get(
-        f"https://news.smol.ai{latest_url}", headers={"User-Agent": "Mozilla/5.0"}
-    )
+    try:
+        latest_data = requests.get(
+            f"https://news.smol.ai{latest_url}",
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=DEFAULT_HTTP_TIMEOUT_S,
+        )
+        latest_data.raise_for_status()
+    except Exception as e:
+        log(f"Failed to fetch smol.ai issue page: {e}")
+        return {
+            "latest_url": latest_url,
+            "content": None,
+        }
     soup = BeautifulSoup(latest_data.text, "html.parser")
     content = soup.find_all("main", id="main-content")[0].text
 
@@ -72,9 +107,16 @@ def fetch_tools():
     Returns:
         A DataFrame of AI tools with relevant details.
     """
-    data = requests.get(
-        "https://theresanaiforthat.com", headers={"User-Agent": "Mozilla/5.0"}
-    )
+    try:
+        data = requests.get(
+            "https://theresanaiforthat.com",
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=DEFAULT_HTTP_TIMEOUT_S,
+        )
+        data.raise_for_status()
+    except Exception as e:
+        log(f"Failed to fetch theresanaiforthat.com: {e}")
+        return pd.DataFrame()
     soup = BeautifulSoup(data.text, "html.parser")
     names = soup.find_all(class_="tasks")[0].find_all(class_="ai_link_wrap")
 
@@ -118,9 +160,16 @@ def fetch_tools():
     tools = tools[tools["trend"] > 150]
 
     for url in tools["url"]:
-        data = requests.get(
-            f"https://theresanaiforthat.com{url}", headers={"User-Agent": "Mozilla/5.0"}
-        )
+        try:
+            data = requests.get(
+                f"https://theresanaiforthat.com{url}",
+                headers={"User-Agent": "Mozilla/5.0"},
+                timeout=DEFAULT_HTTP_TIMEOUT_S,
+            )
+            data.raise_for_status()
+        except Exception as e:
+            log(f"Failed to fetch tool page {url}: {e}")
+            continue
         soup = BeautifulSoup(data.text, "html.parser")
         content = soup.find(class_="ai_description").text.strip().replace("\n", " ")
         tools.loc[tools["url"] == url, "description"] = content
@@ -137,7 +186,14 @@ def fetch_repos():
     """
     log("Fetching trending repositories from GitHub...")
     url = "https://github.com/trending?since=daily"
-    data = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    try:
+        data = requests.get(
+            url, headers={"User-Agent": "Mozilla/5.0"}, timeout=DEFAULT_HTTP_TIMEOUT_S
+        )
+        data.raise_for_status()
+    except Exception as e:
+        log(f"Failed to fetch GitHub trending page: {e}")
+        return pd.DataFrame(columns=["name", "description", "length"])
     soup = BeautifulSoup(data.text, "html.parser")
     repo_links = soup.find_all(class_="Box-row")
     repos = pd.DataFrame(
@@ -153,7 +209,12 @@ def fetch_repos():
     for repo_link in repos["name"]:
         try:
             repo_url = f"https://www.github.com/{repo_link.replace('Repo Name: ', '')}"
-            repo_data = requests.get(repo_url, headers={"User-Agent": "Mozilla/5.0"})
+            repo_data = requests.get(
+                repo_url,
+                headers={"User-Agent": "Mozilla/5.0"},
+                timeout=DEFAULT_HTTP_TIMEOUT_S,
+            )
+            repo_data.raise_for_status()
             repo_soup = BeautifulSoup(repo_data.text, "html.parser")
             content = repo_soup.find("article").text.strip()
             repos.loc[repos["name"] == repo_link, "description"] = content
@@ -167,13 +228,19 @@ def fetch_repos():
 
 
 def fetch_news_repos():
-    covered = json.loads(r.get("covered"))
+    r = _get_redis()
+    covered = _loads_maybe_bytes(r.get("covered")) or {}
+    covered.setdefault("news", [])
+    covered.setdefault("repos", [])
+    covered.setdefault("tools", [])
 
     news = fetch_news()
-    if news['latest_url']:
-        if news["latest_url"] in covered["news"]:
+    latest_url = news.get("latest_url") if isinstance(news, dict) else None
+    if latest_url:
+        if latest_url in covered["news"]:
             news = {}
-        covered["news"].extend([news["latest_url"]])
+        else:
+            covered["news"].append(latest_url)
 
     repos = fetch_repos()[["name", "description"]].head(3)
     for item in covered["repos"]:

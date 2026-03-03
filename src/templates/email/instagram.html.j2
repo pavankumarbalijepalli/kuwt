@@ -1,0 +1,17 @@
+{% extends "base.html.j2" %}
+
+{% block accent %}#c13584{% endblock %}
+
+{% block content %}
+  <h2 class="section-title">Instagram Content</h2>
+  <p class="meta">{{ date }} • {{ cards|length }} item(s)</p>
+
+  {% for c in cards %}
+    <div class="card">
+      <h3>{{ c.title }}</h3>
+      <div class="badge">{{ c.source }}</div>
+      <div class="content">{{ c.content_html }}</div>
+    </div>
+  {% endfor %}
+{% endblock %}
+

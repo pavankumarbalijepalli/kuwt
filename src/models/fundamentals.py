@@ -84,9 +84,7 @@ class LinkedinResponse(BaseModel):
     hashtags: str = Field(
         ..., description="5–7 relevant hashtags for the LinkedIn article."
     )
-    word_count: int = Field(
-        ..., description="Total word count (should be below 130)."
-    )
+    word_count: int = Field(..., description="Total word count (should be below 130).")
 
 
 class InstagramResponse(BaseModel):
@@ -121,10 +119,14 @@ class InstagramResponse(BaseModel):
 
 class TeachersResponse(BaseModel):
     linkedin_post: LinkedinResponse = Field(
-        ..., description="Content for LinkedIn post."
+        ..., description="LinkedIn post content for today's fundamentals topic(s)."
     )
     instagram_post: InstagramResponse = Field(
-        ..., description="Content for Instagram post."
+        ..., description="Instagram content for today's fundamentals topic(s)."
     )
-    medium_post: MediumResponse = Field(..., description="Content for Medium article.")
-    youtube_post: YoutubeResponse = Field(..., description="Content for YouTube video.")
+    medium_post: MediumResponse = Field(
+        ..., description="Medium article content for today's fundamentals topic(s)."
+    )
+    youtube_post: YoutubeResponse = Field(
+        ..., description="YouTube video content for today's fundamentals topic(s)."
+    )
