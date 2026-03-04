@@ -10,9 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      RESEARCHER_GEMINI: ${{ secrets.RESEARCHER_GEMINI }}
-      ENTHUSIAST_GEMINI: ${{ secrets.ENTHUSIAST_GEMINI }}
-      TEACHER_GEMINI: ${{ secrets.TEACHER_GEMINI }}
+      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
       EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       EMAIL_TO: ${{ secrets.EMAIL_TO }}
