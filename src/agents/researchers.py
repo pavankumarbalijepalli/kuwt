@@ -4,7 +4,7 @@ import os
 
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
-from brains.gemini import get_gemini_model
+from brains.mistral import get_mistral_model
 from models.papers import (
     LinkedInResearchPost,
     MediumResearchArticle,
@@ -19,7 +19,7 @@ from utils.logger import log
 from utils.paths import ASSETS_OUTPUT_DIR
 import json
 
-llm = get_gemini_model("RESEARCHER_GEMINI")
+llm = get_mistral_model()
 
 researcher_on_linkedin = create_agent(
     name="researcher_on_linkedin",

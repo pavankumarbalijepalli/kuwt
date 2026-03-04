@@ -7,7 +7,7 @@ from time import sleep
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
 
-from brains.gemini import get_gemini_model
+from brains.mistral import get_mistral_model
 from models.tools_and_news import (
     InstagramNewsVideo,
     LinkedinNewsPost,
@@ -19,7 +19,7 @@ from tools.fetch_tools_and_news import fetch_news_repos
 from utils.logger import log
 from utils.paths import ASSETS_OUTPUT_DIR
 
-llm = get_gemini_model(user="ENTHUSIAST_GEMINI")
+llm = get_mistral_model()
 
 enthusiast_on_linkedin = create_agent(
     name="enthusiast_on_linkedin",
