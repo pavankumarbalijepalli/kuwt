@@ -1,303 +1,347 @@
 # Keep Up With Technology (KUWT)
 
-## Overview
+> **An AI-powered content generation pipeline** that keeps technology enthusiasts up-to-date with the latest research, news, and GitHub trends — automatically generating platform-ready posts for LinkedIn, Instagram, Medium, and YouTube.
 
-**KUWT** is an AI-powered content generation automation platform designed to keep technology enthusiasts and learners up-to-date with the latest developments in AI and technology. This project automatically generates high-quality, platform-specific educational content on technology topics for multiple channels including YouTube, LinkedIn, Instagram, and Medium.
-
-The platform uses intelligent agents powered by LLMs (Large Language Models) to:
-
-- Fetch and analyze trending research papers, technology news, and GitHub repositories
-- Generate engaging, educational content tailored to each platform's audience and format
-- Maintain consistency in messaging while adapting to platform-specific requirements
-- Automate the entire content creation workflow with orchestrated agent coordination
-- Distribute content via automated email notifications
+---
 
 ## Table of Contents
 
+- [Overview](#overview)
 - [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
 - [Project Architecture](#project-architecture)
 - [Agents](#agents)
-- [Content Formats](#content-formats)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Content Output](#content-output)
+- [Technology Stack](#technology-stack)
 - [Todos & Roadmap](#todos--roadmap)
 - [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Overview
+
+**KUWT** (Keep Up With Technology) is an orchestrated multi-agent system that automates the entire lifecycle of technology content creation — from data collection to formatted, email-ready platform posts.
+
+Every day, three specialized AI agents run in sequence:
+
+1. **Researchers** — ingests trending AI research papers from Hugging Face and writes platform-specific content for each paper.
+2. **Enthusiasts** — scrapes the latest technology news and trending GitHub repositories to produce community-focused posts.
+3. **Teachers** — generates educational content about AI/technology fundamentals stored in Redis.
+
+The `AgentOrchestrator` coordinates all three agents, normalizes their output, renders HTML email digests using Jinja2 templates, and sends platform-specific emails (LinkedIn, Instagram, Medium, YouTube) via Gmail SMTP.
+
+---
 
 ## Features
 
-- 🤖 **Three Specialized Agents**: Researchers, Teachers, and Enthusiasts agents for different content types
-- 📰 **Automated Data Collection**:
-  - Fetches trending research papers from Hugging Face
-  - Aggregates technology news and AI developments
-  - Discovers trending GitHub repositories
-- 🎬 **Multi-Platform Content Generation**: Creates platform-optimized content for:
-  - **LinkedIn** - Professional, research-backed posts
-  - **Medium** - In-depth technical articles
-  - **Instagram** - Engaging, visual-friendly content
-  - **YouTube** - 5-minute educational video scripts
-- 🧠 **Flexible LLM Support**: Compatible with multiple LLM backends (Google Gemini, Ollama, OpenAI)
-- 💾 **Structured Output**: Uses Pydantic models for consistent, validated content structure
-- 📧 **Automated Email Distribution**: Sends platform-specific content emails for easy publishing
-- 🎛️ **Dual Interface**: Web UI for interactive use or CLI for automation/scheduling
-- 📊 **Organized Content Management**: Structured storage organized by date and content type
+- 🤖 **Three Specialized LangChain Agents** with structured (Pydantic) response formats
+- 📰 **Automated Data Collection**
+  - Research papers from Hugging Face (`HF_TOKEN`)
+  - Technology news and trending GitHub repositories (`GITHUB_TOKEN`)
+  - Fundamentals and covered topics from Redis (Upstash)
+- 🎬 **Multi-Platform Content Generation** for LinkedIn, Instagram, Medium, and YouTube
+- 🧠 **Flexible LLM Backends** — Mistral (active default), Google Gemini, GitHub OpenAI, and Ollama
+- 💾 **Pydantic Structured Output** — all agent responses are fully validated before saving
+- 📧 **HTML Email Distribution** — styled Jinja2 templates rendered per platform and sent via Gmail SMTP SSL
+- 📁 **Organized Output Storage** — generated content saved as JSON and Markdown under `src/assets/output/<YYYYMMDD>/`
+- 🔁 **Built-in Retry Logic** — each agent retries up to 3 times on failure
+- ⏱️ **Rate-limit Safety** — 60-second sleep between consecutive LLM calls
+
+---
+
+## Project Architecture
+
+```text
+air-kuwt/
+├── .env                              # Environment variables (not committed)
+├── .github/
+│   └── workflows/
+│       └── kuwt.yml                 # GitHub Actions CI/CD workflow
+├── requirements.txt
+├── TODO.md
+├── README.md
+└── src/
+    ├── main.py                       # AgentOrchestrator — runs pipeline & sends emails
+    │
+    ├── agents/                       # AI agent implementations
+    │   ├── researchers.py            # Research paper content generator
+    │   ├── teachers.py               # Educational fundamentals content generator
+    │   └── enthusiasts.py            # Technology news & repos content generator
+    │
+    ├── brains/                       # LLM backend integrations
+    │   ├── mistral.py                # Mistral AI (active default — mistral-large-latest)
+    │   ├── gemini.py                 # Google Gemini 2.5 Flash
+    │   ├── github_openai.py          # GitHub-hosted OpenAI models
+    │   └── ollama.py                 # Local Ollama models
+    │
+    ├── models/                       # Pydantic response schemas
+    │   ├── papers.py                 # Research paper content models
+    │   ├── fundamentals.py           # Educational content models
+    │   └── tools_and_news.py         # News & repository content models
+    │
+    ├── prompts/                      # LLM system prompts
+    │   ├── papers.py
+    │   ├── fundamentals.py
+    │   └── tools_and_news.py
+    │
+    ├── tools/                        # Data collection utilities
+    │   ├── fetch_papers.py           # Downloads papers from Hugging Face
+    │   ├── fetch_tools_and_news.py   # Fetches AI news and GitHub trending repos
+    │   └── fetch_topics.py           # Reads fundamentals topics from Redis
+    │
+    ├── rendering/                    # Output normalization & HTML email rendering
+    │   ├── normalize.py              # Converts agent JSON into platform EmailCards
+    │   ├── email_renderer.py         # Jinja2 HTML rendering per platform
+    │   ├── email_digest.py           # EmailCard dataclass and Platform type
+    │   └── email_templates.py        # Template helpers
+    │
+    ├── templates/
+    │   └── email/                    # Jinja2 HTML email templates (per platform)
+    │
+    ├── utils/                        # Utility functions
+    │   ├── email_handler.py          # Gmail SMTP SSL email sender
+    │   ├── logger.py                 # File-based logging
+    │   ├── paths.py                  # Centralized path constants
+    │   ├── json_tree.py              # JSON processing utilities
+    │   └── stt.py                    # Speech-to-text utilities
+    │
+    └── assets/
+        ├── input/                    # (Legacy) JSON input fallback files
+        │   └── papers/               # Downloaded research papers (by date)
+        └── output/                   # Generated content (organized by date)
+            └── <YYYYMMDD>/
+                ├── researchers.json
+                ├── teachers.json
+                ├── enthusiasts.json
+                └── *.md              # Optional markdown exports
+
+logs/                                 # Application log files
+```
+
+---
+
+## Agents
+
+### 1. Researchers Agent (`src/agents/researchers.py`)
+
+Reads trending research papers fetched from Hugging Face and generates platform-specific content for each paper.
+
+| Platform  | Agent Name                | Response Model            |
+| --------- | ------------------------- | ------------------------- |
+| LinkedIn  | `researcher_on_linkedin`  | `LinkedInResearchPost`    |
+| Instagram | `researcher_on_instagram` | `InstagramResearchScript` |
+| Medium    | `researcher_on_medium`    | `MediumResearchArticle`   |
+| YouTube   | `researcher_on_youtube`   | `YouTubeResearchScript`   |
+
+- Input: paper text from `tools/fetch_papers.py`
+- Output: `src/assets/output/<date>/researchers.json`
+- Rate limit: 60s sleep between each platform call per paper
+
+---
+
+### 2. Teachers Agent (`src/agents/teachers.py`)
+
+Generates educational content on AI/technology fundamentals by calling the `fetch_topics` tool (backed by Redis).
+
+| Platform  | Agent Name             | Response Model      |
+| --------- | ---------------------- | ------------------- |
+| LinkedIn  | `teacher_on_linkedin`  | `LinkedinResponse`  |
+| Instagram | `teacher_on_instagram` | `InstagramResponse` |
+| Medium    | `teacher_on_medium`    | `MediumResponse`    |
+| YouTube   | `teacher_on_youtube`   | `YoutubeResponse`   |
+
+- Input: fundamentals topic fetched via Redis (`fundamentals` key)
+- Output: `src/assets/output/<date>/teachers.json`
+
+---
+
+### 3. Enthusiasts Agent (`src/agents/enthusiasts.py`)
+
+Scrapes technology news and trending GitHub repositories to generate community-focused posts.
+
+| Platform  | Agent Name                | Response Model       |
+| --------- | ------------------------- | -------------------- |
+| LinkedIn  | `enthusiast_on_linkedin`  | `LinkedinNewsPost`   |
+| Instagram | `enthusiast_on_instagram` | `InstagramNewsVideo` |
+| YouTube   | `enthusiast_on_youtube`   | `YoutubeNewsVideo`   |
+
+- Input: news and repos from `tools/fetch_tools_and_news.py`
+- Output: `src/assets/output/<date>/enthusiasts.json`
+
+> **Note:** Medium posts are not currently generated by the Enthusiasts agent.
+
+---
+
+### Agent Orchestrator (`src/main.py`)
+
+The `AgentOrchestrator` class coordinates all three agents:
+
+```python
+orchestrator = AgentOrchestrator()
+orchestrator.run()         # Runs all three agents sequentially
+orchestrator.send_email()  # Renders HTML and sends 4 platform emails
+```
+
+It also exposes `save_markdown()` to export platform content as `.md` files (disabled by default in `__main__`).
+
+---
 
 ## Installation
 
 ### Prerequisites
 
-- Python 3.11+
-
+- Python **3.11+**
 - Git
-- Google Gemini API key (for LLM functionality)
-- SMTP email credentials (for email distribution)
-- Internet connection (for paper fetching and API calls)
+- Active accounts/API keys for: Mistral AI, Hugging Face, GitHub, Gmail SMTP
+- A Redis instance (e.g. [Upstash](https://upstash.com/)) with `fundamentals` and `covered` keys populated
 
-### Quick Start
+### Setup
 
-1. Clone the repository:
+1. **Clone the repository:**
 
 ```bash
 git clone <repository-url>
 cd air-kuwt
 ```
 
-1. Create a Python virtual environment:
+2. **Create and activate a virtual environment:**
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# macOS / Linux
+source venv/bin/activate
 ```
 
-1. Install dependencies:
+3. **Install dependencies:**
 
 ```bash
 pip install -r requirements.txt
 ```
 
-1. Configure environment variables:
+4. **Configure environment variables** (see [Configuration](#configuration) below).
+
+5. **Seed Redis** with fundamental topics and covered content (required for the Teachers agent).
+
+---
+
+## Configuration
 
 Create a `.env` file in the project root with the following variables:
 
-```bash
-# Google Gemini API Configuration
-RESEARCHER_GEMINI=<your-gemini-api-key>
-TEACHER_GEMINI=<your-gemini-api-key>
-ENTHUSIAST_GEMINI=<your-gemini-api-key>
+```env
+# ── LLM APIs ──────────────────────────────────────────────────────────────────
+MISTRAL_API_KEY=<your-mistral-api-key>          # Active LLM — all agents use this
+RESEARCHER_GEMINI=<your-gemini-api-key>         # Optional: Google Gemini backend
+TEACHER_GEMINI=<your-gemini-api-key>            # Optional: Google Gemini backend
+ENTHUSIAST_GEMINI=<your-gemini-api-key>         # Optional: Google Gemini backend
+GITHUB_TOKEN=<your-github-pat>                  # For GitHub trending repo fetching
 
-# Email Configuration (SMTP)
-SMTP_SERVER=smtp.gmail.com
-SMTP_PORT=587
-SENDER_EMAIL=<your-email@gmail.com>
-SENDER_PASSWORD=<your-app-password>
-RECIPIENT_EMAIL=<recipient-email@example.com>
+# ── Data Sources ──────────────────────────────────────────────────────────────
+HF_TOKEN=<your-huggingface-token>               # For fetching trending research papers
+REDIS_URL=<your-redis-url>                      # Upstash (or any Redis) connection string
+                                                # Keys required: `fundamentals`, `covered`
 
-# Optional: Ollama Configuration (if using local models)
-OLLAMA_BASE_URL=http://localhost:11434
+# ── Email Distribution (Gmail SMTP SSL) ───────────────────────────────────────
+EMAIL_FROM=<your-gmail-address>
+EMAIL_PASSWORD=<your-gmail-app-password>        # Gmail App Password (not account password)
+EMAIL_TO=<recipient-email-or-group>
 ```
 
-1. Prepare input data:
+> **Gmail App Password:** Enable 2-Step Verification on your Google account, then generate an App Password at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords).
 
-- Create `src/assets/input/fundamentals.json` with topic definitions
-- Create `src/assets/input/covered.json` to track covered content (optional)
+---
 
 ## Usage
 
-### Running the Full Automation Pipeline
-
-Execute the complete workflow with agent orchestration and email distribution:
+### Run the full pipeline
 
 ```bash
-python src/main.py
+# From the repo root, run with PYTHONPATH pointing to src/
+PYTHONPATH=src python src/main.py
+
+# Or navigate into src/ first
+cd src && python main.py
 ```
 
 This will:
 
-1. Run the **Researchers Agent** to generate research paper content
-2. Run the **Teachers Agent** to generate educational content
-3. Run the **Enthusiasts Agent** to generate news and trending repository content
-4. Aggregate all content by platform (LinkedIn, Instagram, Medium, YouTube)
-5. Send platform-specific content via email for review and publishing
+1. Run the **Researchers Agent** on today's trending HF papers
+2. Run the **Enthusiasts Agent** on today's AI news and trending GitHub repos
+3. Run the **Teachers Agent** on a fundamentals topic from Redis
+4. Normalize and render all output into HTML email digests
+5. Send one email per platform (LinkedIn, Instagram, Medium, YouTube) via Gmail SMTP
 
-### Running the Web Interface
-
-Start the interactive Streamlit control panel to interact with agents individually:
-
-```bash
-streamlit run src/app.py
-```
-
-This opens a web interface where you can:
-
-- Select specific agents (Researchers, Teachers, or Enthusiasts)
-- Configure content parameters
-- Execute individual agent workflows
-- View generated content in real-time
-- Download and manage output files
-
-### Manual Agent Usage
-
-You can also import and use agents directly in Python scripts:
+### Use agents individually in Python
 
 ```python
+import sys
+sys.path.insert(0, "src")  # ensure src is on PYTHONPATH
+
 from agents.researchers import Researchers
 from agents.teachers import Teachers
 from agents.enthusiasts import Enthusiasts
 
-# Initialize agents
 researchers = Researchers()
+researchers_output = researchers.run()
+
 teachers = Teachers()
+teachers_output = teachers.run()
+
 enthusiasts = Enthusiasts()
-
-# Run individual agents
-researchers.run()
-teachers.run()
-enthusiasts.run()
+enthusiasts_output = enthusiasts.run()
 ```
 
-## Project Architecture
+---
 
-```text
-air-kuwt/
-├── README.md
-├── requirements.txt
-├── src/
-│   ├── app.py                          # Streamlit web interface
-│   ├── main.py                         # Agent orchestrator and email automation
-│   ├── agents/                         # AI agent implementations
-│   │   ├── researchers.py              # Research paper content generator
-│   │   ├── teachers.py                 # Educational fundamentals content generator
-│   │   └── enthusiasts.py              # Technology news & repos content generator
-│   │
-│   ├── brains/                         # LLM backend integrations
-│   │   ├── gemini.py                   # Google Gemini integration
-│   │   ├── github_openai.py            # GitHub OpenAI integration
-│   │   └── ollama.py                   # Ollama local model integration
-│   │
-│   ├── models/                         # Pydantic data models
-│   │   ├── fundamentals.py             # Educational content models
-│   │   ├── papers.py                   # Research paper content models
-│   │   └── tools_and_news.py           # News & repository content models
-│   │
-│   ├── prompts/                        # LLM system prompts
-│   │   ├── fundamentals.py             # Educational content prompts
-│   │   ├── papers.py                   # Research content prompts
-│   │   └── tools_and_news.py           # News & repository prompts
-│   │
-│   ├── tools/                          # Data collection utilities
-│   │   ├── fetch_papers.py             # Download papers from Hugging Face
-│   │   ├── fetch_tools_and_news.py     # Fetch technology news and repos
-│   │   └── fetch_topics.py             # Extract trending topics
-│   │
-│   ├── utils/                          # Utility functions
-│   │   ├── logger.py                   # Logging configuration
-│   │   ├── email_handler.py            # SMTP email utilities
-│   │   ├── stt.py                      # Speech-to-text utilities
-│   │   └── json_tree.py                # JSON processing utilities
-│   │
-│   └── assets/                         # Static files and content storage
-│       ├── input/                      # Input data sources
-│       │   ├── fundamentals.json       # Topic/fundamental definitions
-│       │   ├── covered.json            # Previously covered content tracking
-│       │   └── papers/                 # Downloaded research papers (by date)
-│       └── output/                     # Generated content by date
-│
-└── logs/                               # Application logs
-```
+## Content Output
 
-## Agents
+All output is stored under `src/assets/output/<YYYYMMDD>/`:
 
-The system uses three specialized agents that work together to create comprehensive technology content:
-
-### 1. **Researchers Agent**
-
-Analyzes academic research papers and generates technical, research-focused content:
-
-- **Input**: Trending research papers from Hugging Face and academic sources
-- **Output Formats**:
-  - **LinkedIn**: Professional research posts with key findings and implications
-  - **Medium**: In-depth technical articles with methodology and analysis
-  - **YouTube**: 5-minute educational video scripts with visual cues
-  - **Instagram**: Short, visual-friendly script snippets with key takeaways
-
-### 2. **Teachers Agent**
-
-Creates educational content focused on fundamental concepts and learning:
-
-- **Input**: Core AI/technology fundamentals and topics
-- **Output Formats**:
-  - **LinkedIn**: Professional educational posts with progressive learning paths
-  - **Medium**: Tutorial articles with examples and best practices
-  - **YouTube**: Educational explainer scripts with clear progression
-  - **Instagram**: Bite-sized learning tips and concept visualizations
-
-### 3. **Enthusiasts Agent**
-
-Generates community-focused content from technology news and trending repositories:
-
-- **Input**: Technology news, GitHub trending repositories, and community discussions
-- **Output Formats**:
-  - **LinkedIn**: Engaging posts about trending tools and news
-  - **Medium**: Opinion pieces and trend analysis articles
-  - **YouTube**: News roundup scripts and community highlight videos
-  - **Instagram**: Trending tool announcements and community highlights
-
-## Agent Orchestrator
-
-The `AgentOrchestrator` in [src/main.py](src/main.py) coordinates all three agents:
-
-- Executes agents sequentially to generate daily content
-- Aggregates output from all agents into platform-specific formats
-- Prepares email notifications with generated content
-- Distributes content via SMTP email for manual publishing or automation
-
-## Content Formats
-
-Each agent produces structured JSON output containing content for all platforms. The output is organized by date in the `src/assets/output/` directory:
-
-### Researchers Agent Output (`researchers.json`)
+### `researchers.json`
 
 ```json
 {
-  "paper_title": {
-    "linkedin_post": { "title": "...", "content": "..." },
-    "instagram_post": { "title": "...", "content": "..." },
-    "medium_post": { "title": "...", "content": "..." },
-    "youtube_post": { "title": "...", "content": "..." }
+  "<paper_title>": {
+    "linkedin_post":  { "hook": "...", "research_problem": "...", "key_insights": "...", "why_it_matters": "...", "closing_reflection": "...", "relavant_hashtags": "..." },
+    "instagram_post": { ... },
+    "medium_post":    { ... },
+    "youtube_post":   { ... }
   }
 }
 ```
 
-### Teachers Agent Output (`teachers.json`)
+### `teachers.json`
 
 ```json
 {
-  "topic_name": {
-    "linkedin": "...",
-    "instagram": "...",
-    "medium": "...",
-    "youtube": "..."
-  }
+  "linkedin_post":  { "title": "...", ... },
+  "instagram_post": { "title": "...", ... },
+  "medium_post":    { "title": "...", ... },
+  "youtube_post":   { "title": "...", ... }
 }
 ```
 
-### Enthusiasts Agent Output (`enthusiasts.json`)
+### `enthusiasts.json`
 
 ```json
 {
   "news": {
     "news": {
-      "linkedin": "...",
-      "instagram": "...",
-      "medium": "...",
-      "youtube": "..."
+      "linkedin_post":  { ... },
+      "instagram_post": { ... },
+      "youtube_video":  { ... }
     }
   },
   "repos": {
-    "repo_name": {
-      "linkedin": "...",
-      "instagram": "...",
-      "medium": "...",
-      "youtube": "..."
+    "<repo_name>": {
+      "linkedin_post":  { ... },
+      "instagram_post": { ... },
+      "youtube_video":  { ... }
     }
   }
 }
@@ -305,88 +349,83 @@ Each agent produces structured JSON output containing content for all platforms.
 
 ### Email Distribution
 
-The orchestrator aggregates content from all three agents into four platform-specific emails:
+The orchestrator sends four emails per run, one per platform:
 
-1. **LinkedIn Posts** - Professional, research-focused content
-2. **Instagram Posts** - Visual, engaging, short-form content
-3. **Medium Posts** - In-depth, long-form articles
-4. **YouTube Posts** - Script content for video creation
+| Email Subject                                      | Platform Content                    |
+| -------------------------------------------------- | ----------------------------------- |
+| `Your Daily AI Content on <date>: LINKEDIN POSTS`  | Professional, research-backed posts |
+| `Your Daily AI Content on <date>: INSTAGRAM POSTS` | Short-form, visual-friendly content |
+| `Your Daily AI Content on <date>: MEDIUM POSTS`    | Long-form technical articles        |
+| `Your Daily AI Content on <date>: YOUTUBE POSTS`   | Video scripts and roundups          |
 
-## Todos & Roadmap
-
-### High Priority
-
-- Enhance content quality validation and review workflow
-- Implement comprehensive error handling and retry logic for API failures
-- Add scheduling system for daily automated runs (cron/APScheduler)
-- Create content tracking system to avoid duplicates and repetition
-- Improve email templates with better formatting and branding
-
-### Medium Priority
-
-- Add unit tests for all agent workflows
-- Implement detailed logging and monitoring for production deployment
-- Create dashboard for content performance analytics
-- Add content review/approval workflow before email distribution
-- Implement content caching to reduce API calls
-- Support for additional LLM backends (OpenAI, Claude, etc.)
-
-### Low Priority
-
-- Support for additional platforms (TikTok, Twitter/X, Bluesky, Reddit)
-- Multi-language content generation
-- Advanced content personalization by audience segment
-- Integration with third-party publishing platforms (Buffer, Hootsuite)
-- ML-based optimal posting time calculation
-- Advanced analytics for engagement metrics
-
-### Code Quality
-
-- Add comprehensive docstrings to all modules
-- Implement configuration management system (config.yaml/environment variables)
-- Add dependency injection for cleaner LLM backend integration
-- Create comprehensive API/module documentation
-- Refactor email handling for better template management
-- Add type hints throughout codebase
+---
 
 ## Technology Stack
 
-### Core Dependencies
+| Category                   | Library                  | Version       |
+| -------------------------- | ------------------------ | ------------- |
+| **Agent Framework**        | `langchain`              | 1.2.10        |
+| **LLM — Mistral (active)** | `langchain-mistralai`    | 1.1.1         |
+| **LLM — Gemini**           | `langchain-google-genai` | 3.0.1         |
+| **LLM — Ollama**           | `langchain-ollama`       | 1.0.1         |
+| **Tracing**                | `langsmith`              | 0.5.0         |
+| **Data Validation**        | `pydantic`               | 2.12.5        |
+| **PDF Processing**         | `pypdf`, `PyPDF2`        | 5.2.0 / 3.0.1 |
+| **Web Scraping**           | `beautifulsoup4`         | 4.14.3        |
+| **HTTP**                   | `requests`               | 2.32.3        |
+| **Templating**             | `jinja2`                 | 3.1.6         |
+| **Redis Client**           | `redis`                  | 7.2.0         |
+| **Env Management**         | `python-dotenv`          | 1.0.1         |
+| **Data**                   | `pandas`                 | 3.0.1         |
+| **Progress**               | `tqdm`                   | 4.67.3        |
+| **Markdown**               | `Markdown`               | 3.10          |
 
-- **LangChain** (`langchain-core`, `langchain-ollama`, `langsmith`) - Agent and LLM orchestration framework
-- **Pydantic** - Data validation and structured output with `response_format`
-- **Hugging Face Hub** - Access to research papers and model cards
-- **Google Gemini API** - Primary LLM backend for agent reasoning
-- **PDF Processing** (`pypdf`, `PyPDF2`) - Extract text from research papers
+---
 
-### Content Generation & Audio
+## Todos & Roadmap
 
-- **Transformers** - NLP models for embeddings and analysis
-- **TorchData/TorchTune** - PyTorch utilities for efficient data handling
-- **Kokoro** - AI voice synthesis for potential audio content
-- **SoundFile** - Audio file I/O utilities
+See [TODO.md](TODO.md) for the full prioritized task list. Key highlights:
 
-### Integration & Communication
+### 🔴 P0 — Critical (can't run / can't ship)
 
-- **Requests** - HTTP library for API calls
-- **python-dotenv** - Environment variable management
-- **secure-smtplib** - Secure email distribution
+- Fix agent retry recursion bug (wrong method signature on retry)
+- Fix `TeachersResponse` Pydantic model/schema mismatch
+- Harden Redis config — avoid import-time `os.environ` failures
+- Add HTTP timeouts and `raise_for_status()` to external requests
 
-### Development
+### 🟡 P1 — Important (docs / config / reproducibility)
 
-- **Markdown** - Processing markdown formatted content
-- **LangSmith** - Debugging and monitoring for LangChain workflows
+- Standardize `PYTHONPATH` / run mode across local and CI
+- Fix `.env` loading in tools (avoid CWD-dependent relative paths)
+- Remove duplicate `Markdown==3.10` in `requirements.txt`
+- Add Redis seeding documentation / script
+
+### 🟢 P2–P3 — Improvements
+
+- Add proper `pyproject.toml` and package structure
+- Add unit tests for orchestrator assembly and "no content" flows
+- Add `ruff` linting and `pre-commit` hooks
+- Multi-platform support (Twitter/X, Bluesky, TikTok)
+- Content scheduling with APScheduler or cron
+
+---
 
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/new-feature`)
-3. Commit your changes (`git commit -m 'Add new feature'`)
-4. Push to the branch (`git push origin feature/new-feature`)
+2. Create a feature branch: `git checkout -b feature/my-feature`
+3. Commit your changes: `git commit -m 'Add my feature'`
+4. Push to the branch: `git push origin feature/my-feature`
 5. Open a Pull Request
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+_Built with ❤️ by [Pavan Kumar Balijepalli](https://www.linkedin.com/in/pavan-kumar-balijepalli/) · [Kundelu AI](https://youtube.com/@kundelu-ai)_
