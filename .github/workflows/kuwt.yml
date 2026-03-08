@@ -1,9 +1,9 @@
 name: kuwt-daily-prod-run
 
 on:
-  # schedule:
-  #   - cron: '30 15 * * *'
-  workflow_dispatch:
+   schedule:
+    - cron: '30 15 * * *' 
+   workflow_dispatch:
 
 jobs:
   run-script:
