@@ -84,10 +84,13 @@ class Researchers:
             linkedin_response = self.run_researcher(
                 paper_content, self.linkedin_researcher
             )
+            sleep(60)  # Sleep for 60 seconds to avoid rate limits
             instagram_response = self.run_researcher(
                 paper_content, self.instagram_researcher
             )
+            sleep(60)  # Sleep for 60 seconds to avoid rate limits
             medium_response = self.run_researcher(paper_content, self.medium_researcher)
+            sleep(60)  # Sleep for 60 seconds to avoid rate limits
             youtube_response = self.run_researcher(
                 paper_content, self.youtube_researcher
             )
@@ -99,7 +102,6 @@ class Researchers:
                 medium_post=medium_response,
                 youtube_post=youtube_response,
             ).model_dump()
-            sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
         self.save_content()
         return self.content

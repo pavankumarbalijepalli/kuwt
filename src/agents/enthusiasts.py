@@ -90,18 +90,20 @@ class Enthusiasts:
                 linkedin_response = self.run_enthusiast(
                     item_content, self.linkedin_enthusiast
                 )
+                sleep(60)  # Sleep for 60 seconds to avoid rate limits
                 instagram_response = self.run_enthusiast(
                     item_content, self.instagram_enthusiast
                 )
+                sleep(60)  # Sleep for 60 seconds to avoid rate limits
                 youtube_response = self.run_enthusiast(
                     item_content, self.youtube_enthusiast
                 )
+                sleep(60)  # Sleep for 60 seconds to avoid rate limits
                 self.content[topic_name][item_name] = {
                     "linkedin_post": linkedin_response.model_dump(),
                     "instagram_post": instagram_response.model_dump(),
                     "youtube_video": youtube_response.model_dump(),
                 }
-                sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
         self.save_content()
         return self.content
