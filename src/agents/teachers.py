@@ -1,5 +1,6 @@
 import os
 # os.chdir('..')
+from time import sleep
 
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
@@ -84,7 +85,7 @@ class Teachers:
         instagram_response = self.run_teacher(self.instagram_teacher)
         medium_response = self.run_teacher(self.medium_teacher)
         youtube_response = self.run_teacher(self.youtube_teacher)
-
+        sleep(60)
         log("All Agents completed. Compiling results...")
         self.content = TeachersResponse(
             linkedin_post=linkedin_response,
