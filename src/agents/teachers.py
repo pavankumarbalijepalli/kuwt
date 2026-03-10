@@ -1,10 +1,9 @@
 import os
 # os.chdir('..')
-from time import sleep
 
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
-from brains.mistral import get_mistral_model
+from brains.gemini import get_gemini_model
 from models.fundamentals import (
     LinkedinResponse,
     MediumResponse,
@@ -19,7 +18,7 @@ from utils.logger import log
 from utils.paths import ASSETS_OUTPUT_DIR
 import json
 
-llm = get_mistral_model()
+llm = get_gemini_model('TEACHER_GEMINI')
 
 teacher_on_linkedin = create_agent(
     name="teacher_on_linkedin",
@@ -82,11 +81,8 @@ class Teachers:
 
     def run(self) -> TeachersResponse:
         linkedin_response = self.run_teacher(self.linkedin_teacher)
-        sleep(60)
         instagram_response = self.run_teacher(self.instagram_teacher)
-        sleep(60)
         medium_response = self.run_teacher(self.medium_teacher)
-        sleep(60)
         youtube_response = self.run_teacher(self.youtube_teacher)
 
         log("All Agents completed. Compiling results...")

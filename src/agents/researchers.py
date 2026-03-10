@@ -4,7 +4,7 @@ import os
 
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
-from brains.mistral import get_mistral_model
+from brains.gemini import get_gemini_model
 from models.papers import (
     LinkedInResearchPost,
     MediumResearchArticle,
@@ -19,7 +19,7 @@ from utils.logger import log
 from utils.paths import ASSETS_OUTPUT_DIR
 import json
 
-llm = get_mistral_model()
+llm = get_gemini_model('RESEARCHER_GEMINI')
 
 researcher_on_linkedin = create_agent(
     name="researcher_on_linkedin",
@@ -84,13 +84,10 @@ class Researchers:
             linkedin_response = self.run_researcher(
                 paper_content, self.linkedin_researcher
             )
-            sleep(60)  # Sleep for 60 seconds to avoid rate limits
             instagram_response = self.run_researcher(
                 paper_content, self.instagram_researcher
             )
-            sleep(60)  # Sleep for 60 seconds to avoid rate limits
             medium_response = self.run_researcher(paper_content, self.medium_researcher)
-            sleep(60)  # Sleep for 60 seconds to avoid rate limits
             youtube_response = self.run_researcher(
                 paper_content, self.youtube_researcher
             )
@@ -102,6 +99,7 @@ class Researchers:
                 medium_post=medium_response,
                 youtube_post=youtube_response,
             ).model_dump()
+            sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
         self.save_content()
         return self.content

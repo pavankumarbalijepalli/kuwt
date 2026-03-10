@@ -7,7 +7,7 @@ from time import sleep
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
 
-from brains.mistral import get_mistral_model
+from brains.gemini import get_gemini_model
 from models.tools_and_news import (
     InstagramNewsVideo,
     LinkedinNewsPost,
@@ -19,7 +19,7 @@ from tools.fetch_tools_and_news import fetch_news_repos
 from utils.logger import log
 from utils.paths import ASSETS_OUTPUT_DIR
 
-llm = get_mistral_model()
+llm = get_gemini_model('ENTHUSIAST_GEMINI')
 
 enthusiast_on_linkedin = create_agent(
     name="enthusiast_on_linkedin",
@@ -89,20 +89,18 @@ class Enthusiasts:
                 linkedin_response = self.run_enthusiast(
                     item_content, self.linkedin_enthusiast
                 )
-                sleep(60)  # Sleep for 60 seconds to avoid rate limits
                 instagram_response = self.run_enthusiast(
                     item_content, self.instagram_enthusiast
                 )
-                sleep(60)  # Sleep for 60 seconds to avoid rate limits
                 youtube_response = self.run_enthusiast(
                     item_content, self.youtube_enthusiast
                 )
-                sleep(60)  # Sleep for 60 seconds to avoid rate limits
                 self.content[topic_name][item_name] = {
                     "linkedin_post": linkedin_response.model_dump(),
                     "instagram_post": instagram_response.model_dump(),
                     "youtube_video": youtube_response.model_dump(),
                 }
+                sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
         self.save_content()
         return self.content
