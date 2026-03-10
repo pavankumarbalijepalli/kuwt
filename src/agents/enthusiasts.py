@@ -75,6 +75,10 @@ class Enthusiasts:
                 return self.run_enthusiast(topic, enthusiast, retries - 1)
 
     def run(self):
+        raw_content = {
+            "news": {"news": {"content": self.news.get("content", [])}},
+            "repos": self.repos,
+        }
         if not self.news.get("content", []):
             raw_content = {"repos": self.repos}
         if not self.repos:
