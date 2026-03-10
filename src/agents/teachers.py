@@ -25,7 +25,7 @@ teacher_on_linkedin = create_agent(
     name="teacher_on_linkedin",
     model=llm,
     system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
-    tools=[fetch_topics],
+    # tools=[fetch_topics],
     response_format=LinkedinResponse,
 )
 
@@ -33,7 +33,7 @@ teacher_on_instagram = create_agent(
     name="teacher_on_instagram",
     model=llm,
     system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
-    tools=[fetch_topics],
+    # tools=[fetch_topics],
     response_format=InstagramResponse,
 )
 
@@ -41,7 +41,7 @@ teacher_on_medium = create_agent(
     name="teacher_on_medium",
     model=llm,
     system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
-    tools=[fetch_topics],
+    # tools=[fetch_topics],
     response_format=MediumResponse,
 )
 
@@ -49,7 +49,7 @@ teacher_on_youtube = create_agent(
     name="teacher_on_youtube",
     model=llm,
     system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
-    tools=[fetch_topics],
+    # tools=[fetch_topics],
     response_format=YoutubeResponse,
 )
 
@@ -61,6 +61,7 @@ class Teachers:
         self.medium_teacher = teacher_on_medium
         self.youtube_teacher = teacher_on_youtube
         self.content = None
+        self.topics = fetch_topics.invoke({})
         self.date = dt.now().strftime("%Y%m%d")
         log("Teachers initialized")
 
@@ -69,7 +70,7 @@ class Teachers:
         response = teacher.invoke(
             {
                 "messages": [
-                    HumanMessage(content="Generate content for the fundamentals topic.")
+                    HumanMessage(content=self.topics)
                 ]
             }
         )
