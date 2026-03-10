@@ -2,10 +2,10 @@ import os
 import textwrap
 from typing import Dict, List
 from notion_client import Client
-from rendering.email_digest import EmailCard, Platform
+from rendering.post_digest import PostCard, Platform
 from utils.logger import log
 
-def publish_to_notion(cards_by_platform: Dict[Platform, List[EmailCard]], date: str):
+def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: str):
     notion_token = os.environ.get("NOTION_TOKEN")
     database_id = os.environ.get("NOTION_DATABASE_ID")
 

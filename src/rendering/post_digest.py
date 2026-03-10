@@ -7,15 +7,15 @@ Platform = Literal["linkedin", "instagram", "medium", "youtube"]
 
 
 @dataclass(frozen=True)
-class EmailCard:
+class PostCard:
     title: str
     source: str
     markdown: str
 
 
 @dataclass(frozen=True)
-class PlatformEmail:
+class PlatformPost:
     platform: Platform
     date: str
-    cards: Sequence[EmailCard]
+    cards: Sequence[PostCard]
 

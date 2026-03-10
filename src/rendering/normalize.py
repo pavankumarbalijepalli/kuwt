@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from rendering.email_digest import EmailCard, Platform
+from rendering.post_digest import PostCard, Platform
 
 
 def _as_text(value: Any) -> str:
@@ -41,8 +41,8 @@ def build_platform_cards(
     researchers: Optional[Dict[str, Any]],
     enthusiasts: Optional[Dict[str, Any]],
     teachers: Optional[Dict[str, Any]],
-) -> Dict[Platform, List[EmailCard]]:
-    out: Dict[Platform, List[EmailCard]] = {
+) -> Dict[Platform, List[PostCard]]:
+    out: Dict[Platform, List[PostCard]] = {
         "linkedin": [],
         "instagram": [],
         "medium": [],
@@ -70,7 +70,7 @@ def build_platform_cards(
             ).strip()
             if li_md:
                 out["linkedin"].append(
-                    EmailCard(title=paper_title, source="Research", markdown=li_md)
+                    PostCard(title=paper_title, source="Research", markdown=li_md)
                 )
 
             for platform_key, platform in [
@@ -91,7 +91,7 @@ def build_platform_cards(
                 md = "\n".join(filter(None, md_parts)).strip()
                 if md:
                     out[platform].append(
-                        EmailCard(title=paper_title, source="Research", markdown=md)
+                        PostCard(title=paper_title, source="Research", markdown=md)
                     )
 
     if enthusiasts and isinstance(enthusiasts, dict):
@@ -113,7 +113,7 @@ def build_platform_cards(
                     ).strip()
                     if md:
                         out[platform].append(
-                            EmailCard(title="AI News", source="Enthusiast", markdown=md)
+                            PostCard(title="AI News", source="Enthusiast", markdown=md)
                         )
 
         repos_root = enthusiasts.get("repos", {}) or {}
@@ -136,7 +136,7 @@ def build_platform_cards(
                         ).strip()
                         if md:
                             out[platform].append(
-                                EmailCard(title=repo_name, source="Enthusiast", markdown=md)
+                                PostCard(title=repo_name, source="Enthusiast", markdown=md)
                             )
 
     if teachers and isinstance(teachers, dict):
@@ -162,7 +162,7 @@ def build_platform_cards(
             md = "\n".join(filter(None, md_parts)).strip()
             if md:
                 out[platform].append(
-                    EmailCard(title=str(title), source="Teacher", markdown=md)
+                    PostCard(title=str(title), source="Teacher", markdown=md)
                 )
 
     return out
