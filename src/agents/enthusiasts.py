@@ -74,13 +74,12 @@ class Enthusiasts:
                 return self.run_enthusiast(topic, enthusiast, retries - 1)
 
     def run(self):
-        raw_content = {
-            "news": {"news": {"content": self.news.get("content", [])}},
-            "repos": self.repos,
-        }
-        if not raw_content["news"]['news']['content'] and not raw_content["repos"]:
-            self.content = "No news or repos found for the given date."
-            return self.content
+        if not self.news.get("content", []):
+            raw_content = {"repos": self.repos}
+        if not self.repos:
+            raw_content = {"news": {"news": {"content": self.news.get("content", [])}}}
+        if not self.news.get("content", []) and not self.repos:
+            raw_content = {}
         self.content = {"news": {}, "repos": {}}
 
         for topic_name, topic_dictionary in raw_content.items():
