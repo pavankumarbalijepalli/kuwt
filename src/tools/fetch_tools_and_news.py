@@ -242,9 +242,10 @@ def fetch_news_repos():
         else:
             covered["news"].append(latest_url)
 
-    repos = fetch_repos()[["name", "description"]].head(3)
+    repos = fetch_repos()[["name", "description"]]
     for item in covered["repos"]:
         repos = repos.drop(repos[repos["name"].str.contains(item)].index)
+    repos = repos.head(3)
     covered["repos"].extend(
         repos["name"].apply(lambda x: x.replace("Repo Name: ", "").strip()).tolist()
     )
