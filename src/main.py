@@ -1,15 +1,13 @@
 from agents.researchers import Researchers
 from agents.enthusiasts import Enthusiasts
 from agents.teachers import Teachers
-from utils.email_handler import send_email
 from datetime import datetime as dt
 from utils.logger import log
 from utils.paths import ASSETS_OUTPUT_DIR
 import os
 
 from rendering.normalize import build_platform_cards
-from rendering.email_renderer import render_platform_email_html
-from utils.email_handler import KUNDELU_AI_PNG_URL
+from publishers.notion_publisher import publish_to_notion
 
 
 class AgentOrchestrator:
@@ -36,31 +34,14 @@ class AgentOrchestrator:
         self.content['teachers'] = self.teachers.run()
         log("All agents have completed their tasks.")
 
-    def send_email(self):
+    def publish(self):
         cards_by_platform = build_platform_cards(
             researchers=self.content.get("researchers"),
             enthusiasts=self.content.get("enthusiasts"),
             teachers=self.content.get("teachers"),
         )
-
-        for platform, post_type in [
-            ("linkedin", "Linkedin Posts"),
-            ("instagram", "Instagram Posts"),
-            ("medium", "Medium Posts"),
-            ("youtube", "Youtube Posts"),
-        ]:
-            cards = cards_by_platform.get(platform) or []
-            if not cards:
-                continue
-
-            log(f"Sending email for {platform} content...")
-            html = render_platform_email_html(
-                platform=platform,
-                date=self.date,
-                cards=cards,
-                kundelu_ai_png_url=KUNDELU_AI_PNG_URL,
-            )
-            send_email(full_post=html, post_type=post_type)
+        
+        publish_to_notion(cards_by_platform, self.date)
 
     def save_markdown(self):
         cards_by_platform = build_platform_cards(
@@ -83,5 +64,5 @@ class AgentOrchestrator:
 if __name__ == "__main__":
     orchestrator = AgentOrchestrator()
     orchestrator.run()
-    orchestrator.send_email()
+    orchestrator.publish()
     # orchestrator.save_markdown()
