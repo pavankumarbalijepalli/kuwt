@@ -13,7 +13,7 @@ except ImportError:
     pass
 
 from publishers.notion_publisher import publish_to_notion
-from rendering.email_digest import EmailCard
+from rendering.post_digest import PostCard
 
 def test_run():
     # Only try to test if credentials exist
@@ -25,7 +25,7 @@ def test_run():
         
     dummy_cards = {
         "linkedin": [
-            EmailCard(
+            PostCard(
                 title="Test LinkedIn Post",
                 source="Research",
                 markdown="### Test Heading\nThis is a *test* post generated directly from the Python script to verify the Notion connection.\n\n```python\nprint('Test connection successful')\n```"

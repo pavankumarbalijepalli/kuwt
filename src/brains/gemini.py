@@ -11,3 +11,9 @@ def get_gemini_model(
         model=model_name, temperature=0, api_key=os.getenv(user)
     )
     return llm
+
+def get_gemini_3_1_flash_lite():
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-3.1-flash-lite-preview", temperature=0, api_key=os.getenv("GEMINI_3_1_FLASH_LITE_PREVIEW")
+    )
+    return llm
