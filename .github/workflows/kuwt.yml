@@ -1,4 +1,4 @@
-name: kuwt-daily
+name: kuwt-daily-dev-run
 
 on:
   schedule:
