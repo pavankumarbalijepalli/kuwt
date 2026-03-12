@@ -26,12 +26,16 @@ class AgentOrchestrator:
         #     )
         #     return
         log("Starting Agent Orchestrator...")
-        log("Running Researchers Agent...")
-        self.content['researchers'] = self.researchers.run()
-        log("Running Enthusiasts Agent...")
-        self.content['enthusiasts'] = self.enthusiasts.run()
-        log("Running Teachers Agent...")
-        self.content['teachers'] = self.teachers.run()
+        for agent_name, agent_run_fn in [
+            ("researchers", self.researchers.run),
+            ("enthusiasts", self.enthusiasts.run),
+            ("teachers", self.teachers.run),
+        ]:
+            try:
+                log(f"Running {agent_name.capitalize()} Agent...")
+                self.content[agent_name] = agent_run_fn()
+            except Exception as e:
+                log(f"Error running {agent_name} agent: {e}")
         log("All agents have completed their tasks.")
 
     def publish(self):
