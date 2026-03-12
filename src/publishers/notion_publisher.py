@@ -5,10 +5,32 @@ from rendering.post_digest import PostCard, Platform
 from utils.logger import log
 
 def chunk_text(text: str, max_length: int = 2000) -> List[str]:
-    """Splits text into chunks of maximum length strictly by character count."""
+    """Splits text into chunks, attempting to preserve lines while staying under max_length."""
     if not text:
         return []
-    return [text[i : i + max_length] for i in range(0, len(text), max_length)]
+    
+    chunks = []
+    current_chunk = ""
+    
+    for line in text.splitlines(keepends=True):
+        if len(current_chunk) + len(line) <= max_length:
+            current_chunk += line
+        else:
+            if current_chunk:
+                chunks.append(current_chunk.strip())
+            
+            # If a single line is longer than max_length, force split it
+            if len(line) > max_length:
+                for i in range(0, len(line), max_length):
+                    chunks.append(line[i : i + max_length].strip())
+                current_chunk = ""
+            else:
+                current_chunk = line
+                
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+        
+    return [c for c in chunks if c]
 
 def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: str):
     notion_token = os.environ.get("NOTION_TOKEN")
