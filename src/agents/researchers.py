@@ -5,14 +5,17 @@ import os
 from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
 from brains.gemini import get_gemini_model, get_gemini_3_1_flash_lite
-from models.papers import (
-    LinkedInResearchPost,
-    MediumResearchArticle,
-    YouTubeResearchScript,
-    InstagramResearchScript,
-    ResearchersResponse,
+from models.linkedin import LinkedInPost
+from models.instagram import ReelScript
+from models.medium import MediumArticle
+from models.youtube import YouTubeScript
+from models.social import SocialMediaResponse
+from prompts.social_media import (
+    LINKEDIN_PROMPT,
+    INSTAGRAM_PROMPT,
+    MEDIUM_PROMPT,
+    YOUTUBE_PROMPT,
 )
-from prompts.papers import PAPERS_PROMPT
 from tools.fetch_papers import get_papers
 from datetime import datetime as dt
 from utils.logger import log
@@ -25,29 +28,29 @@ llm = get_gemini_3_1_flash_lite()
 researcher_on_linkedin = create_agent(
     name="researcher_on_linkedin",
     model=llm,
-    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
-    response_format=LinkedInResearchPost,
+    system_prompt=LINKEDIN_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
+    response_format=LinkedInPost,
 )
 
 researcher_on_instagram = create_agent(
     name="researcher_on_instagram",
     model=llm,
-    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
-    response_format=InstagramResearchScript,
+    system_prompt=INSTAGRAM_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
+    response_format=ReelScript,
 )
 
 researcher_on_medium = create_agent(
     name="researcher_on_medium",
     model=llm,
-    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
-    response_format=MediumResearchArticle,
+    system_prompt=MEDIUM_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
+    response_format=MediumArticle,
 )
 
 researcher_on_youtube = create_agent(
     name="researcher_on_youtube",
     model=llm,
-    system_prompt=PAPERS_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
-    response_format=YouTubeResearchScript,
+    system_prompt=YOUTUBE_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
+    response_format=YouTubeScript,
 )
 
 
@@ -74,7 +77,7 @@ class Researchers:
                 )
                 return self.run_researcher(paper, researcher, retries - 1)
 
-    def run(self) -> ResearchersResponse:
+    def run(self) -> dict[str, SocialMediaResponse]:
         if not self.papers:
             # self.content = "No papers found for the given date."
             log("No papers found for the given date.")
@@ -94,7 +97,7 @@ class Researchers:
             )
 
             log("Paper processed. Storing results...")
-            self.content[paper_name] = ResearchersResponse(
+            self.content[paper_name] = SocialMediaResponse(
                 linkedin_post=linkedin_response,
                 instagram_post=instagram_response,
                 medium_post=medium_response,

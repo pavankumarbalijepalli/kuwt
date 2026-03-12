@@ -8,13 +8,17 @@ from langchain.agents import create_agent
 from langchain_core.messages import HumanMessage
 
 from brains.gemini import get_gemini_model, get_gemini_3_1_flash_lite
-from models.tools_and_news import (
-    InstagramNewsVideo,
-    LinkedinNewsPost,
-    MediumNewsPost,
-    YoutubeNewsVideo,
+from models.linkedin import LinkedInPost
+from models.instagram import ReelScript
+from models.medium import MediumArticle
+from models.youtube import YouTubeScript
+from models.social import SocialMediaResponse
+from prompts.social_media import (
+    LINKEDIN_PROMPT,
+    INSTAGRAM_PROMPT,
+    MEDIUM_PROMPT,
+    YOUTUBE_PROMPT,
 )
-from prompts.tools_and_news import TOOLS_AND_NEWS_PROMPT
 from tools.fetch_tools_and_news import fetch_news_repos
 from utils.logger import log
 from utils.paths import ASSETS_OUTPUT_DIR
@@ -25,29 +29,29 @@ llm = get_gemini_3_1_flash_lite()
 enthusiast_on_linkedin = create_agent(
     name="enthusiast_on_linkedin",
     model=llm,
-    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
-    response_format=LinkedinNewsPost,
+    system_prompt=LINKEDIN_PROMPT + "\n" + "CURRENT REQUIREMENT: Linkedin Post",
+    response_format=LinkedInPost,
 )
 
 enthusiast_on_instagram = create_agent(
     name="enthusiast_on_instagram",
     model=llm,
-    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
-    response_format=InstagramNewsVideo,
+    system_prompt=INSTAGRAM_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
+    response_format=ReelScript,
 )
 
 enthusiast_on_medium = create_agent(
     name="enthusiast_on_medium",
     model=llm,
-    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
-    response_format=MediumNewsPost,
+    system_prompt=MEDIUM_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
+    response_format=MediumArticle,
 )
 
 enthusiast_on_youtube = create_agent(
     name="enthusiast_on_youtube",
     model=llm,
-    system_prompt=TOOLS_AND_NEWS_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
-    response_format=YoutubeNewsVideo,
+    system_prompt=YOUTUBE_PROMPT + "\n" + "CURRENT REQUIREMENT: Youtube Video",
+    response_format=YouTubeScript,
 )
 
 
@@ -100,11 +104,11 @@ class Enthusiasts:
                 youtube_response = self.run_enthusiast(
                     item_content, self.youtube_enthusiast
                 )
-                self.content[topic_name][item_name] = {
-                    "linkedin_post": linkedin_response.model_dump(),
-                    "instagram_post": instagram_response.model_dump(),
-                    "youtube_video": youtube_response.model_dump(),
-                }
+                self.content[topic_name][item_name] = SocialMediaResponse(
+                    linkedin_post=linkedin_response,
+                    instagram_post=instagram_response,
+                    youtube_post=youtube_response,
+                ).model_dump()
                 sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
         self.save_content()
