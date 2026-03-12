@@ -1,8 +1,8 @@
-name: kuwt-daily
+name: kuwt-daily-dev-run
 
 on:
-  # schedule:
-  #   - cron: '30 15 * * *'
+  schedule:
+    - cron: '30 15 * * *'
   workflow_dispatch:
 
 jobs:
@@ -10,10 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-      EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-      EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      GEMINI_3_1_FLASH_LITE_PREVIEW: ${{ secrets.GEMINI_3_1_FLASH_LITE_PREVIEW }}
+      NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+      NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
       REDIS_URL: ${{ secrets.REDIS_URL }}
     
     steps:
