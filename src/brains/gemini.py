@@ -2,7 +2,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 import os
 from dotenv import load_dotenv
 
-load_dotenv('D:\\kundelu-ai\\air-kuwt\\.env') 
+load_dotenv() 
 
 def get_gemini_model(
     user: str, model_name: str = "gemini-2.5-flash"
