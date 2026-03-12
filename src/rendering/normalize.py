@@ -26,14 +26,14 @@ def _md_kv(title: str, value: Any) -> str:
     text = _as_text(value).strip()
     if not text:
         return ""
-    return f"### {title}\n{text}\n"
+    return f"{text}\n"
 
 
 def _md_code(title: str, code: str) -> str:
     code = (code or "").strip()
     if not code:
         return ""
-    return f"### {title}\n```python\n{code}\n```\n"
+    return f"```python\n{code}\n```\n"
 
 
 def build_platform_cards(
