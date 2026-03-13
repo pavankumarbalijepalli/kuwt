@@ -28,7 +28,6 @@ class SceneType(str, Enum):
     PAYOFF = "payoff"
     CTA = "call_to_action"
 
-
 class VisualCue(BaseModel):
     text_overlay: Optional[str] = None
     animation: Optional[str] = None
@@ -60,4 +59,9 @@ class Scene(BaseModel):
 class ReelScript(BaseModel):
     title: Optional[str] = None
     total_duration_seconds: Optional[float] = None
-    scenes: List[Scene]
+    hook_scene: Scene = Field(..., description="Hook scene")
+    context_scene: Scene = Field(..., description="Context scene")
+    tension_scene: Scene = Field(..., description="Tension scene")
+    pivot_scene: Scene = Field(..., description="Pivot scene")
+    payoff_scene: Scene = Field(..., description="Payoff scene")
+    cta_scene: Scene = Field(..., description="Call to action scene")

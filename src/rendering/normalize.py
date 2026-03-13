@@ -291,7 +291,28 @@ def _render_instagram_script(data: Dict[str, Any]) -> str:
     if title:
         parts.append(f"# Instagram Reel: {title}\n")
     
-    scenes = data.get("scenes", [])
+    # New model structure: individual scene fields
+    scene_keys = [
+        "hook_scene",
+        "context_scene",
+        "tension_scene",
+        "pivot_scene",
+        "payoff_scene",
+        "cta_scene",
+    ]
+    
+    scenes = []
+    has_new_structure = False
+    for key in scene_keys:
+        scene_data = data.get(key)
+        if isinstance(scene_data, dict):
+            scenes.append(scene_data)
+            has_new_structure = True
+            
+    # Fallback to legacy structure: scenes list
+    if not has_new_structure:
+        scenes = data.get("scenes", [])
+        
     if isinstance(scenes, list):
         for scene in scenes:
             if not isinstance(scene, dict):
