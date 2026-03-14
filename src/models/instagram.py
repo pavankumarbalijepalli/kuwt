@@ -29,9 +29,9 @@ class SceneType(str, Enum):
     CTA = "call_to_action"
 
 class VisualCue(BaseModel):
-    text_overlay: Optional[str] = None
-    animation: Optional[str] = None
     icon: Optional[str] = None
+    image: Optional[str] = None
+    clip: Optional[str] = None
 
 
 class Scene(BaseModel):
