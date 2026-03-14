@@ -52,7 +52,11 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                 "Teacher": "Fundamentals"
             }
             content_type = post_type_map.get(card.source, "News")
-
+            teleprompter = ''
+            if platform == 'instagram':
+                for line in card.markdown.split('\n'):
+                    if line.startswith('>'):
+                        teleprompter += line + '\n'
             try:
                 blocks = []
                 for chunk in card.markdown.split("\n\n"):
@@ -100,7 +104,7 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                 content_rich_text = []
                 for wrapped_chunk in chunk_text(card.markdown, 2000):
                     content_rich_text.append({"type": "text", "text": {"content": wrapped_chunk}})
-
+                
                 page = notion.pages.create(
                     parent={"database_id": database_id},
                     properties={
@@ -109,7 +113,8 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                         "Status": {"status": {"name": "Draft"}},
                         "Date": {"date": {"start": formatted_date}},
                         "Type": {"select": {"name": content_type}},
-                        "Content": {"rich_text": content_rich_text}
+                        "Content": {"rich_text": content_rich_text},
+                        "Teleprompter": {"rich_text": [{"type": "text", "text": {"content": teleprompter}}]}
                     },
                     children=block_chunks[0] if block_chunks else []
                 )
