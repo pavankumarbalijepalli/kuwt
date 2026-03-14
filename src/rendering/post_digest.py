@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Sequence
 
-Platform = Literal["linkedin", "instagram", "medium", "youtube"]
+Platform = Literal["linkedin", "instagram", "twitter", "youtube"]
 
 
 @dataclass(frozen=True)

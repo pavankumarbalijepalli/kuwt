@@ -45,7 +45,7 @@ def build_platform_cards(
     out: Dict[Platform, List[PostCard]] = {
         "linkedin": [],
         "instagram": [],
-        "medium": [],
+        "twitter": [],
         "youtube": [],
     }
 
@@ -57,7 +57,7 @@ def build_platform_cards(
             for platform_key, platform in [
                 ("linkedin_post", "linkedin"),
                 ("instagram_post", "instagram"),
-                ("medium_post", "medium"),
+                ("twitter_post", "twitter"),
                 ("youtube_post", "youtube"),
             ]:
                 p = payload.get(platform_key, {}) or {}
@@ -68,8 +68,8 @@ def build_platform_cards(
                     md = _render_instagram_script(p)
                 elif platform == "linkedin":
                     md = _render_linkedin_post(p)
-                elif platform == "medium":
-                    md = _render_medium_article(p)
+                elif platform == "twitter":
+                    md = _render_twitter_thread(p)
                 elif platform == "youtube":
                     md = _render_youtube_script(p)
                 else:
@@ -135,7 +135,7 @@ def build_platform_cards(
         for post_key, platform in [
             ("linkedin_post", "linkedin"),
             ("instagram_post", "instagram"),
-            ("medium_post", "medium"),
+            ("twitter_post", "twitter"),
             ("youtube_post", "youtube"),
         ]:
             t = teachers.get(post_key)
@@ -146,8 +146,8 @@ def build_platform_cards(
                 md = _render_instagram_script(t)
             elif platform == "linkedin":
                 md = _render_linkedin_post(t)
-            elif platform == "medium":
-                md = _render_medium_article(t)
+            elif platform == "twitter":
+                md = _render_twitter_thread(t)
             elif platform == "youtube":
                 md = _render_youtube_script(t)
             else:
@@ -202,48 +202,23 @@ def _render_linkedin_post(data: Dict[str, Any]) -> str:
     return "\n".join(parts).strip()
 
 
-def _render_medium_article(data: Dict[str, Any]) -> str:
-    """Helper to render MediumArticle model into markdown."""
+def _render_twitter_thread(data: Dict[str, Any]) -> str:
+    """Helper to render TwitterThread model into markdown."""
     parts = []
     
     title = data.get("title")
     if title:
-        parts.append(f"# {title}\n")
+        parts.append(f"# Twitter Thread: {title}\n")
         
-    intro = data.get("introduction")
-    if intro:
-        parts.append(f"{intro}\n")
-        
-    bg = data.get("background")
-    if bg:
-        parts.append(f"## Background\n{bg}\n")
-        
-    explanation = data.get("main_explanation")
-    if explanation:
-        parts.append(f"## Deep Dive\n{explanation}\n")
-        
-    cases = data.get("examples_or_use_cases", [])
-    if isinstance(cases, list) and cases:
-        parts.append("## Use Cases & Examples")
-        for c in cases:
-            parts.append(f"- {c}")
-        parts.append("")
-        
-    insights = data.get("key_insights", [])
-    if isinstance(insights, list) and insights:
-        parts.append("## Key Insights")
-        for i in insights:
-            parts.append(f"- {i}")
-        parts.append("")
-        
-    future = data.get("future_implications")
-    if future:
-        parts.append(f"## Future Outlook\n{future}\n")
-        
-    conclusion = data.get("conclusion")
-    if conclusion:
-        parts.append(f"## Conclusion\n{conclusion}")
-        
+    posts = data.get("posts", [])
+    if isinstance(posts, list):
+        for i, post in enumerate(posts):
+            if not isinstance(post, dict):
+                continue
+            content = post.get("content", "")
+            parts.append(f"Tweet {i+1}:")
+            parts.append(f"{content}\n")
+            
     return "\n".join(parts).strip()
 
 
