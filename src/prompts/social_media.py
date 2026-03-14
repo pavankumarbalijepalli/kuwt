@@ -1,5 +1,5 @@
 import json
-hooks = json.load(open("hooks.json"))
+hooks = json.load(open("hooks"))
 
 INSTAGRAM_PROMPT = f"""
 You are an expert short-form educational video script writer and content structuring assistant.
