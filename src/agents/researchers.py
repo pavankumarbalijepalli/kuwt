@@ -7,13 +7,13 @@ from langchain_core.messages import HumanMessage
 from brains.gemini import get_gemini_model, get_gemini_3_1_flash_lite
 from models.linkedin import LinkedInPost
 from models.instagram import ReelScript
-from models.medium import MediumArticle
+from models.twitter import TwitterThread
 from models.youtube import YouTubeScript
 from models.social import SocialMediaResponse
 from prompts.social_media import (
     LINKEDIN_PROMPT,
     INSTAGRAM_PROMPT,
-    MEDIUM_PROMPT,
+    TWITTER_PROMPT,
     YOUTUBE_PROMPT,
 )
 from tools.fetch_papers import get_papers
@@ -39,11 +39,11 @@ researcher_on_instagram = create_agent(
     response_format=ReelScript,
 )
 
-researcher_on_medium = create_agent(
-    name="researcher_on_medium",
+researcher_on_twitter = create_agent(
+    name="researcher_on_twitter",
     model=llm,
-    system_prompt=MEDIUM_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
-    response_format=MediumArticle,
+    system_prompt=TWITTER_PROMPT + "\n" + "CURRENT REQUIREMENT: Twitter Thread",
+    response_format=TwitterThread,
 )
 
 researcher_on_youtube = create_agent(
@@ -58,7 +58,7 @@ class Researchers:
     def __init__(self):
         self.linkedin_researcher = researcher_on_linkedin
         self.instagram_researcher = researcher_on_instagram
-        self.medium_researcher = researcher_on_medium
+        self.twitter_researcher = researcher_on_twitter
         self.youtube_researcher = researcher_on_youtube
         self.content = None
         self.date = dt.now().strftime("%Y%m%d")
@@ -77,31 +77,47 @@ class Researchers:
                 )
                 return self.run_researcher(paper, researcher, retries - 1)
 
-    def run(self) -> dict[str, SocialMediaResponse]:
+    def run(self, target_platforms: list[str] = None) -> dict[str, SocialMediaResponse]:
         if not self.papers:
             # self.content = "No papers found for the given date."
             log("No papers found for the given date.")
             return self.content
+        
+        if target_platforms is None:
+            target_platforms = ["linkedin", "instagram", "twitter", "youtube"]
+            
         self.content = {}
         for paper_name, paper_content in self.papers.items():
             log(f"Processing paper: {paper_name}")
-            linkedin_response = self.run_researcher(
-                paper_content, self.linkedin_researcher
-            )
-            instagram_response = self.run_researcher(
-                paper_content, self.instagram_researcher
-            )
-            medium_response = self.run_researcher(paper_content, self.medium_researcher)
-            youtube_response = self.run_researcher(
-                paper_content, self.youtube_researcher
-            )
-
+            
+            linkedin_response = None
+            if "linkedin" in target_platforms:
+                linkedin_response = self.run_researcher(
+                    paper_content, self.linkedin_researcher
+                )
+            
+            instagram_response = None
+            if "instagram" in target_platforms:
+                instagram_response = self.run_researcher(
+                    paper_content, self.instagram_researcher
+                )
+            
+            twitter_response = None
+            if "twitter" in target_platforms:
+                twitter_response = self.run_researcher(paper_content, self.twitter_researcher)
+            
+            youtube_response = None
+            if "youtube" in target_platforms:
+                youtube_response = self.run_researcher(
+                    paper_content, self.youtube_researcher
+                )
+ 
             log("Paper processed. Storing results...")
             self.content[paper_name] = SocialMediaResponse(
-                linkedin_post=linkedin_response,
-                instagram_post=instagram_response,
-                medium_post=medium_response,
-                youtube_post=youtube_response,
+                linkedin_post=linkedin_response or LinkedInPost(hook="", context="", insight="", key_takeaways=[], closing_thought="", call_to_action="", hashtags=[]),
+                instagram_post=instagram_response or ReelScript(hook_scene=None, context_scene=None, tension_scene=None, pivot_scene=None, payoff_scene=None, cta_scene=None), # Placeholder, ReelScript needs a real Scene but we just dump it to dict
+                twitter_post=twitter_response,
+                youtube_post=youtube_response or YouTubeScript(title="", target_duration_minutes=0, segments=[]),
             ).model_dump()
             sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")

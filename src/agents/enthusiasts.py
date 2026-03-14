@@ -10,13 +10,13 @@ from langchain_core.messages import HumanMessage
 from brains.gemini import get_gemini_model, get_gemini_3_1_flash_lite
 from models.linkedin import LinkedInPost
 from models.instagram import ReelScript
-from models.medium import MediumArticle
+from models.twitter import TwitterThread
 from models.youtube import YouTubeScript
 from models.social import SocialMediaResponse
 from prompts.social_media import (
     LINKEDIN_PROMPT,
     INSTAGRAM_PROMPT,
-    MEDIUM_PROMPT,
+    TWITTER_PROMPT,
     YOUTUBE_PROMPT,
 )
 from tools.fetch_tools_and_news import fetch_news_repos
@@ -40,11 +40,11 @@ enthusiast_on_instagram = create_agent(
     response_format=ReelScript,
 )
 
-enthusiast_on_medium = create_agent(
-    name="enthusiast_on_medium",
+enthusiast_on_twitter = create_agent(
+    name="enthusiast_on_twitter",
     model=llm,
-    system_prompt=MEDIUM_PROMPT + "\n" + "CURRENT REQUIREMENT: Medium Article",
-    response_format=MediumArticle,
+    system_prompt=TWITTER_PROMPT + "\n" + "CURRENT REQUIREMENT: Twitter Thread",
+    response_format=TwitterThread,
 )
 
 enthusiast_on_youtube = create_agent(
@@ -59,7 +59,7 @@ class Enthusiasts:
     def __init__(self):
         self.linkedin_enthusiast = enthusiast_on_linkedin
         self.instagram_enthusiast = enthusiast_on_instagram
-        self.medium_enthusiast = enthusiast_on_medium
+        self.twitter_enthusiast = enthusiast_on_twitter
         self.youtube_enthusiast = enthusiast_on_youtube
         self.content = None
         self.date = dt.now().strftime("%Y%m%d")
@@ -78,7 +78,7 @@ class Enthusiasts:
                 )
                 return self.run_enthusiast(topic, enthusiast, retries - 1)
 
-    def run(self):
+    def run(self, target_platforms: list[str] = None):
         raw_content = {
             "news": {"news": {"content": self.news.get("content", [])}},
             "repos": self.repos,
@@ -89,25 +89,46 @@ class Enthusiasts:
             raw_content = {"news": {"news": {"content": self.news.get("content", [])}}}
         if not self.news.get("content", []) and not self.repos:
             raw_content = {}
+            
+        if target_platforms is None:
+            target_platforms = ["linkedin", "instagram", "twitter", "youtube"]
+            
         self.content = {"news": {}, "repos": {}}
-
+ 
         for topic_name, topic_dictionary in raw_content.items():
             log(f"Processing {topic_name}: {len(topic_dictionary)} items")
             for item_name, item_content in topic_dictionary.items():
                 log(f"Processing Item: {item_name}")
-                linkedin_response = self.run_enthusiast(
-                    item_content, self.linkedin_enthusiast
-                )
-                instagram_response = self.run_enthusiast(
-                    item_content, self.instagram_enthusiast
-                )
-                youtube_response = self.run_enthusiast(
-                    item_content, self.youtube_enthusiast
-                )
+                
+                linkedin_response = None
+                if "linkedin" in target_platforms:
+                    linkedin_response = self.run_enthusiast(
+                        item_content, self.linkedin_enthusiast
+                    )
+                
+                instagram_response = None
+                if "instagram" in target_platforms:
+                    instagram_response = self.run_enthusiast(
+                        item_content, self.instagram_enthusiast
+                    )
+                
+                twitter_response = None
+                if "twitter" in target_platforms:
+                    twitter_response = self.run_enthusiast(
+                        item_content, self.twitter_enthusiast
+                    )
+                
+                youtube_response = None
+                if "youtube" in target_platforms:
+                    youtube_response = self.run_enthusiast(
+                        item_content, self.youtube_enthusiast
+                    )
+                    
                 self.content[topic_name][item_name] = SocialMediaResponse(
-                    linkedin_post=linkedin_response,
-                    instagram_post=instagram_response,
-                    youtube_post=youtube_response,
+                    linkedin_post=linkedin_response or LinkedInPost(hook="", context="", insight="", key_takeaways=[], closing_thought="", call_to_action="", hashtags=[]),
+                    instagram_post=instagram_response or ReelScript(hook_scene=None, context_scene=None, tension_scene=None, pivot_scene=None, payoff_scene=None, cta_scene=None), # type: ignore
+                    twitter_post=twitter_response,
+                    youtube_post=youtube_response or YouTubeScript(title="", target_duration_minutes=0, segments=[]),
                 ).model_dump()
                 sleep(60)  # Sleep for 60 seconds to avoid rate limits
         log("All Agents completed. Compiling results...")
