@@ -269,9 +269,9 @@ def _render_instagram_script(data: Dict[str, Any]) -> str:
     # New model structure: individual scene fields
     scene_keys = [
         "hook_scene",
-        "context_scene",
-        "tension_scene",
-        "pivot_scene",
+        "context_scenes",
+        "tension_scenes",
+        "pivot_scenes",
         "payoff_scene",
         "cta_scene",
     ]
