@@ -37,7 +37,7 @@ class VisualCue(BaseModel):
 class Scene(BaseModel):
     scene_number: int = Field(..., description="Sequential scene number")
     scene_type: SceneType = Field(..., description="Narrative role of the scene")
-    duration_seconds: float = Field(..., description="Length of the scene")
+    duration_seconds: float = Field(..., description="Length of the scene - must be less than 3 seconds")
 
     script: str = Field(..., description="Exact words the creator should say")
 
@@ -60,8 +60,8 @@ class ReelScript(BaseModel):
     title: Optional[str] = None
     total_duration_seconds: Optional[float] = None
     hook_scene: Scene = Field(..., description="Hook scene")
-    context_scene: Scene = Field(..., description="Context scene")
-    tension_scene: Scene = Field(..., description="Tension scene")
-    pivot_scene: Scene = Field(..., description="Pivot scene")
+    context_scenes: List[Scene] = Field(..., description="Context scenes - max of 2 scenes")
+    tension_scenes: List[Scene] = Field(..., description="Tension scenes - max of 2 scenes")
+    pivot_scenes: List[Scene] = Field(..., description="Pivot scenes - max of 2 scenes")
     payoff_scene: Scene = Field(..., description="Payoff scene")
     cta_scene: Scene = Field(..., description="Call to action scene")

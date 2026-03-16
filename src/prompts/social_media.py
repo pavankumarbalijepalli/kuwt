@@ -322,6 +322,10 @@ Scene writing rules:
 • Each scene must contain exactly one clear spoken idea.
 • Avoid long explanations in a single scene.
 • Maintain a fast-paced educational style.
+• Keep the content beginner friendly. Do not use complex jargon/vocabulary.
+• Use simple language and short sentences.
+• Do not use contractions in sentences. Keep the script easy to read without hard to spell words. 
+• Incorporate "You" (Making it personal for viewer), "Think" (Make the user think), "Act" (Make the user take CTA) in sentences.
 
 Script writing style:
 • Conversational

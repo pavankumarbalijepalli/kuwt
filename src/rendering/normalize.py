@@ -289,16 +289,24 @@ def _render_instagram_script(data: Dict[str, Any]) -> str:
         scenes = data.get("scenes", [])
         
     if isinstance(scenes, list):
+        new_scenes = []
+        for scene in scenes:
+            if isinstance(scene, List):
+                new_scenes.extend(scene)
+            else:
+                new_scenes.append(scene)
+        scenes = new_scenes
+
         for scene in scenes:
             if not isinstance(scene, dict):
                 continue
-            
-            s_num = scene.get("scene_number", "?")
-            s_type = str(scene.get("scene_type", "")).replace("_", " ").title()
-            duration = scene.get("duration_seconds", "?")
-            script = scene.get("script", "")
-            angle = str(scene.get("camera_angle", "")).replace("_", " ").title()
-            shot = str(scene.get("shot_type", "")).replace("_", " ").title()
+            else:
+                s_num = scene.get("scene_number", "?")
+                s_type = str(scene.get("scene_type", "")).replace("_", " ").title()
+                duration = scene.get("duration_seconds", "?")
+                script = scene.get("script", "")
+                angle = str(scene.get("camera_angle", "")).replace("_", " ").title()
+                shot = str(scene.get("shot_type", "")).replace("_", " ").title()
             
             parts.append(f"## Scene {s_num}: {s_type} ({duration}s)")
             parts.append(f"**Camera:** {angle} | **Shot:** {shot}")
@@ -309,13 +317,13 @@ def _render_instagram_script(data: Dict[str, Any]) -> str:
                 parts.append("\n**Visual Cues:**")
                 for cue in visual_cues:
                     if not isinstance(cue, dict): continue
-                    text = cue.get("text_overlay")
-                    anim = cue.get("animation")
+                    clip = cue.get("clip")
+                    image = cue.get("image")
                     icon = cue.get("icon")
                     
                     cue_parts = []
-                    if text: cue_parts.append(f"Text: {text}")
-                    if anim: cue_parts.append(f"Anim: {anim}")
+                    if clip: cue_parts.append(f"Clip: {clip}")
+                    if image: cue_parts.append(f"Image: {image}")
                     if icon: cue_parts.append(f"Icon: {icon}")
                     if cue_parts:
                         parts.append(f"- {' | '.join(cue_parts)}")
