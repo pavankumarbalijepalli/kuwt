@@ -50,9 +50,9 @@ class Scene(BaseModel):
         description="Camera motion or style"
     )
 
-    visual_cues: Optional[List[VisualCue]] = Field(
+    visual_cues: List[VisualCue] = Field(
         default=None,
-        description="Optional overlays, animations, or icons"
+        description="Suggestions for visual elements such as images, icons, or quick clips to make the scene more engaging"
     )
 
 

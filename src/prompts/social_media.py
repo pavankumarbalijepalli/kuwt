@@ -31,11 +31,11 @@ hooks = [
         "Today, we’re gonna be talking about how to [outcome].",
         "Alright this is the single easiest way to [outcome].",
         "If you want to instantly [outcome], this is the ONLY video you will ever need to watch.",
-        "Here’s exactly how you’re gonna [outcome] in 2024. You’re gonna [solution].",
+        "Here’s exactly how you’re gonna [outcome] in [YEAR]. You’re gonna [solution].",
         "Here’s the only video you will ever need to watch to [outcome].",
         "Here’s the strategy I used to [outcome]. I used a strategy I like to call [solution].",
         "The easiest way to [outcome] is to [solution].",
-        "Here’s exactly how you’re gonna [outcome] in 2024. You’re gonna [solution].",
+        "Here’s exactly how you’re gonna [outcome] in [YEAR]. You’re gonna [solution].",
         "The way to instantly [outcome] is to simply [solution].",
         "If there’s one thing you can do to [outcome] that actually takes ZERO work, it’s this.",
         "If you’re tired of [opposite of outcome], here’s the ultimate guide to [outcome]. Take notes and thank me later.",
@@ -71,7 +71,7 @@ hooks = [
         "Here’s a life hack that’s gonna [outcome] that they never taught you in school.",
         "Here’s how to [outcome] in a way a 5 year-old could understand.",
         "This is exactly how to [outcome] in a way a 5 year-old could understand.",
-        "You wanna [outcome] in 2024, I recommend listening to this video all the way through because the trends/methods/strategies/tricks that have worked for [outcome] in the past aren’t anymore, but the new trend/method/strategy/trick you need to use is…",
+        "You wanna [outcome] in [YEAR], I recommend listening to this video all the way through because the trends/methods/strategies/tricks that have worked for [outcome] in the past aren’t anymore, but the new trend/method/strategy/trick you need to use is…",
         "I was just [personal story] and I just got the best advice on [outcome] that I’ve ever heard.",
         "This is the ultimate guide on how to [outcome].",
         "Does [solution] ACTUALLY get you [outcome]?",
@@ -100,7 +100,7 @@ hooks = [
         "\"Here's what (group) don't want you to know about (thing)\"",
         "\"Here are the top 5 (thing avatar wants) for (avatar)\"",
         "\"Here's how to get (thing avatar wants) literally anywhere\"",
-        "\"3 (resource type) that will save you from ebola as a (avatar) in 2023\"",
+        "\"3 (resource type) that will save you from ebola as a (avatar) in [YEAR]\"",
         "\"The secret to (thing they want) is (intriguing phrasing of simple concept)\"",
         "\"How to ACTUALLY (achieve thing they want)\"",
         "\"How to get (thing they want)\" - with green screen and you showing a guide",
@@ -120,7 +120,7 @@ hooks = [
         "Let’s get you (thing they want) papi/bro/homie.",
         "Here’s the no-fail system to getting (thing they want) your (roasting their normal source of information) didn’t teach you",
         "If you want to win at (thing they experience) you need (thing that sounds counterintuitive)",
-        "The WORST (thing they do/choose) in 2024 is…",
+        "The WORST (thing they do/choose) in [YEAR] is…",
         "Here are 3 signs you picked the wrong (thing in your niche)",
         "If you’re having trouble {thing they need to do}, watch this video, I’m gonna change your life. It might not change your life, but I’m gonna help you {dream outcome}.",
         "If you’re not getting [dream outcome] in [situation/time], it’s probably because you don’t know the [solution name] framework.",
@@ -155,9 +155,9 @@ hooks = [
         "If you’re a (IVP), you need to get (thing that sounds awful)",
         "Whenever I get to a [bad situation], where I think, why do I even bother, I just try to remind myself: [insert quote].",
         "Stop [habit/action] if you actually want to become successful.",
-        "Here’s 3 reasons why you need to [habit/action] in 2024.",
+        "Here’s 3 reasons why you need to [habit/action] in [YEAR].",
         "Everybody that tells you you need to [opposite of solution, or negative habit/action] is lying to you.",
-        "If you want to ACTUALLY [outcome] in 2024, you need to [solution].",
+        "If you want to ACTUALLY [outcome] in [YEAR], you need to [solution].",
         "This is how I went from [personal outcome before] to [dream personal outcome] in _ years/months/days.",
         "Use specific numbers and dates",
         "You don’t understand the 4 phases of [outcome].",
@@ -275,6 +275,8 @@ Your goal is to transform complex context into a compelling short-form narrative
 Hook Examples:
 {hooks}
 
+YEAR: 2026
+
 Narrative guardrails:
 
 • The Hook must create curiosity and stop the scroll.
@@ -312,9 +314,9 @@ Camera rules:
 • Most scenes should use close_up or medium framing.
 
 Visual cues:
-• Add optional overlays for emphasis such as images, icons, or quick clips.
-• Overlays should reinforce the spoken content.
-• Avoid adding unnecessary visuals that distract from the message.
+• Suggest visual elements such as "image of code", "logo of the brand", "quick clip of robots", "text overlay", etc.
+• Visual elements should act like visual hooks for every scene to grab the user attention.
+• Since they are suggestions, they dont need to be perfect, they just need to work.
 
 Scene writing rules:
 • Each scene must contain exactly one clear spoken idea.
