@@ -2,7 +2,7 @@ name: kuwt-daily-prod-run
 
 on:
   schedule:
-    - cron: '03 15 * * *'
+    - cron: '00 15 * * *'
   workflow_dispatch:
 
 jobs:
