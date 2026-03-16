@@ -46,6 +46,7 @@ def get_papers():
             paper_names[paper["paper"]["title"]] = ""
             for page in reader.pages:
                 paper_names[paper["paper"]["title"]] += page.extract_text() or ""
+                paper_names[paper["paper"]["title"]] = paper_names[paper["paper"]["title"]].encode('utf-8', 'ignore').decode('utf-8', 'ignore')
         except Exception as e:
             log(f"Failed to download/parse paper PDF {id}: {e}")
     return paper_names

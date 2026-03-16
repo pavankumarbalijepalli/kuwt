@@ -1,9 +1,36 @@
 import os
-import textwrap
 from typing import Dict, List
 from notion_client import Client
 from rendering.post_digest import PostCard, Platform
 from utils.logger import log
+
+def chunk_text(text: str, max_length: int = 2000) -> List[str]:
+    """Splits text into chunks, attempting to preserve lines while staying under max_length."""
+    if not text:
+        return []
+    
+    chunks = []
+    current_chunk = ""
+    
+    for line in text.splitlines(keepends=True):
+        if len(current_chunk) + len(line) <= max_length:
+            current_chunk += line
+        else:
+            if current_chunk:
+                chunks.append(current_chunk.strip())
+            
+            # If a single line is longer than max_length, force split it
+            if len(line) > max_length:
+                for i in range(0, len(line), max_length):
+                    chunks.append(line[i : i + max_length].strip())
+                current_chunk = ""
+            else:
+                current_chunk = line
+                
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+        
+    return [c for c in chunks if c]
 
 def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: str):
     notion_token = os.environ.get("NOTION_TOKEN")
@@ -25,7 +52,11 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                 "Teacher": "Fundamentals"
             }
             content_type = post_type_map.get(card.source, "News")
-
+            teleprompter = ''
+            if platform == 'instagram':
+                for line in card.markdown.split('\n'):
+                    if line.startswith('>'):
+                        teleprompter += line + '\n'
             try:
                 blocks = []
                 for chunk in card.markdown.split("\n\n"):
@@ -41,7 +72,7 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                         lines = chunk.split("\n")
                         code_content = "\n".join(lines[1:-1]) if len(lines) > 2 else chunk
                         # split if code is too long
-                        for wrapped_chunk in textwrap.wrap(code_content, 2000, replace_whitespace=False):
+                        for wrapped_chunk in chunk_text(code_content, 2000):
                             blocks.append({
                                 "object": "block",
                                 "type": "code",
@@ -56,7 +87,7 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                     block_type = "heading_3" if is_header else "paragraph"
                     text_content = chunk[4:].strip() if is_header else chunk
                     
-                    for wrapped_chunk in textwrap.wrap(text_content, 2000, replace_whitespace=False):
+                    for wrapped_chunk in chunk_text(text_content, 2000):
                         blocks.append({
                             "object": "block",
                             "type": block_type,
@@ -71,9 +102,9 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                 formatted_date = f"{date[:4]}-{date[4:6]}-{date[6:]}"
 
                 content_rich_text = []
-                for chunk in textwrap.wrap(card.markdown, 2000, replace_whitespace=False):
-                    content_rich_text.append({"type": "text", "text": {"content": chunk}})
-
+                for wrapped_chunk in chunk_text(card.markdown, 2000):
+                    content_rich_text.append({"type": "text", "text": {"content": wrapped_chunk}})
+                
                 page = notion.pages.create(
                     parent={"database_id": database_id},
                     properties={
@@ -82,7 +113,8 @@ def publish_to_notion(cards_by_platform: Dict[Platform, List[PostCard]], date: s
                         "Status": {"status": {"name": "Draft"}},
                         "Date": {"date": {"start": formatted_date}},
                         "Type": {"select": {"name": content_type}},
-                        "Content": {"rich_text": content_rich_text}
+                        "Content": {"rich_text": content_rich_text},
+                        "Teleprompter": {"rich_text": [{"type": "text", "text": {"content": teleprompter}}]}
                     },
                     children=block_chunks[0] if block_chunks else []
                 )
