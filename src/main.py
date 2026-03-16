@@ -116,9 +116,7 @@ def main():
         target_platforms = ["linkedin", "instagram", "twitter", "youtube"]
 
     orchestrator.run(target_agents=target_agents)
-
-    if args.publish:
-        orchestrator.publish(target_platforms=target_platforms)
+    orchestrator.publish(target_platforms=target_platforms)
     
     if args.save:
         orchestrator.save_markdown(target_platforms=target_platforms)
