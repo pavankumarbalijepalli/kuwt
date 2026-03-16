@@ -2,7 +2,7 @@ name: kuwt-daily-dev-run
 
 on:
   schedule:
-    - cron: '30 15 * * *'
+    - cron: '03 15 * * *'
   workflow_dispatch:
 
 jobs:
