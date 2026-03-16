@@ -67,15 +67,17 @@ class Researchers:
 
     def run_researcher(self, paper, researcher, retries=3):
         log(f"Running Agent: {researcher.name}")
-        response = researcher.invoke({"messages": [HumanMessage(content=paper)]})
-        if "structured_response" in response:
-            return response["structured_response"]
-        else:
-            if retries > 0:
-                log(
-                    f"Agent {researcher.name} failed. Retrying... ({3 - retries + 1}/3)"
-                )
-                return self.run_researcher(paper, researcher, retries - 1)
+        try:
+            response = researcher.invoke({"messages": [HumanMessage(content=paper)]})
+            if "structured_response" in response:
+                return response["structured_response"]
+            else:
+                if retries > 0:
+                    log(f"Agent {researcher.name} failed. Retrying... ({3 - retries + 1}/3)")
+                    return self.run_researcher(paper, researcher, retries - 1)
+        except Exception as e:
+            log(f"Error running paper {paper}: {e}")
+            return None
 
     def run(self, target_platforms: list[str] = None) -> dict[str, SocialMediaResponse]:
         if not self.papers:
