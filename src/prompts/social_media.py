@@ -293,7 +293,7 @@ Narrative guardrails:
 
 • The Payoff should explain why the solution matters and what makes it valuable.
 
-• The CTA should encourage the viewer to engage (comment, follow, try the tool, etc).
+• The CTA should encourage the viewer to engage (comment something for LINK or DOC).
 
 Critical rule:
 The product name, tool name, company name, or model name MUST NOT appear before the Pivot scene.
