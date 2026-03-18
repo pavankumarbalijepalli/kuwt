@@ -280,7 +280,7 @@ def _render_instagram_script(data: Dict[str, Any]) -> str:
     has_new_structure = False
     for key in scene_keys:
         scene_data = data.get(key)
-        if isinstance(scene_data, dict):
+        if isinstance(scene_data, dict) or isinstance(scene_data, list):
             scenes.append(scene_data)
             has_new_structure = True
             
