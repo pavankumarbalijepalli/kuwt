@@ -60,8 +60,8 @@ class ReelScript(BaseModel):
     title: Optional[str] = None
     total_duration_seconds: Optional[float] = None
     hook_scene: Scene = Field(..., description="Hook scene")
-    context_scenes: List[Scene] = Field(..., description="Context scenes - max of 2 scenes")
-    tension_scenes: List[Scene] = Field(..., description="Tension scenes - max of 2 scenes")
-    pivot_scenes: List[Scene] = Field(..., description="Pivot scenes - max of 2 scenes")
+    context_scenes: List[Scene] = Field(..., description="Context scenes - max of 3 scenes")
+    tension_scenes: List[Scene] = Field(..., description="Tension scenes - max of 3 scenes")
+    pivot_scenes: List[Scene] = Field(..., description="Pivot scenes - max of 3 scenes")
     payoff_scene: Scene = Field(..., description="Payoff scene")
     cta_scene: Scene = Field(..., description="Call to action scene")
