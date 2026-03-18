@@ -87,6 +87,7 @@ def build_platform_cards(
             for post_key, platform in [
                 ("linkedin_post", "linkedin"),
                 ("instagram_post", "instagram"),
+                ("twitter_post", "twitter"),
                 ("youtube_post", "youtube"),
             ]:
                 content = news_item.get(post_key)
@@ -95,6 +96,8 @@ def build_platform_cards(
                         md = _render_instagram_script(content)
                     elif platform == "linkedin":
                         md = _render_linkedin_post(content)
+                    elif platform == "twitter":
+                        md = _render_twitter_thread(content)
                     elif platform == "youtube":
                         md = _render_youtube_script(content)
                     else:
@@ -113,6 +116,7 @@ def build_platform_cards(
                 for post_key, platform in [
                     ("linkedin_post", "linkedin"),
                     ("instagram_post", "instagram"),
+                    ("twitter_post", "twitter"),
                     ("youtube_post", "youtube"),
                 ]:
                     content = repo_payload.get(post_key)
@@ -121,6 +125,8 @@ def build_platform_cards(
                             md = _render_instagram_script(content)
                         elif platform == "linkedin":
                             md = _render_linkedin_post(content)
+                        elif platform == "twitter":
+                            md = _render_twitter_thread(content)
                         elif platform == "youtube":
                             md = _render_youtube_script(content)
                         else:
