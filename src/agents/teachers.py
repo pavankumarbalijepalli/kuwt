@@ -11,7 +11,7 @@ from models.youtube import YouTubeScript
 from models.social import SocialMediaResponse
 from prompts.social_media import (
     LINKEDIN_PROMPT,
-    INSTAGRAM_PROMPT,
+    FUNDAMENTALS_PROMPT,
     TWITTER_PROMPT,
     YOUTUBE_PROMPT,
 )
@@ -35,7 +35,7 @@ teacher_on_linkedin = create_agent(
 teacher_on_instagram = create_agent(
     name="teacher_on_instagram",
     model=llm,
-    system_prompt=INSTAGRAM_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
+    system_prompt=FUNDAMENTALS_PROMPT + "\n" + "CURRENT REQUIREMENT: Instagram Reel",
     # tools=[fetch_topics],
     response_format=ReelScript,
 )
