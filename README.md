@@ -1,6 +1,6 @@
 # Keep Up With Technology (KUWT)
 
-> **An AI-powered content generation pipeline** that keeps technology enthusiasts up-to-date with the latest research, news, and GitHub trends — automatically generating platform-ready posts for LinkedIn, Instagram, Medium, and YouTube, and publishing them directly to **Notion**.
+> **An AI-powered content generation pipeline** that keeps technology enthusiasts up-to-date with the latest research, news, and GitHub trends — automatically generating platform-ready posts for LinkedIn, Instagram, Twitter, and YouTube, and publishing them directly to **Notion**.
 
 ---
 
@@ -25,15 +25,15 @@
 
 **KUWT** (Keep Up With Technology) is an orchestrated multi-agent system that automates the entire lifecycle of technology content creation — from data collection to formatted platform posts ready for review.
 
-The system has transitioned from email distribution to **Notion-based publishing**, allowing for a centralized workspace where content can be reviewed, edited, and scheduled.
+The system utilizes an automated **Notion-based publishing** approach, allowing for a centralized workspace where content can be reviewed, edited, and scheduled. It avoids content length limits safely and stores complete responses reliably.
 
-Every day, three specialized AI agents run in sequence:
+Every day, three specialized AI agents can run:
 
 1. **Researchers** — Ingests trending AI research papers from Hugging Face and writes technical content for each paper.
 2. **Enthusiasts** — Scrapes the latest technology news and trending GitHub repositories to produce community-focused updates.
 3. **Teachers** — Generates educational content about AI/technology fundamentals stored in Redis.
 
-The `AgentOrchestrator` coordinates these agents, normalizes their output into `PostCard` objects, and publishes them to a designated Notion database.
+The `AgentOrchestrator` coordinates these agents, optionally normalizes their output into `PostCard` objects, outputs local Markdown/JSON copies, and publishes them to a designated Notion database.
 
 ---
 
@@ -44,12 +44,13 @@ The `AgentOrchestrator` coordinates these agents, normalizes their output into `
   - Research papers from Hugging Face (`HF_TOKEN`).
   - Technology news and trending GitHub repositories (`GITHUB_TOKEN`).
   - Educational topics and history from Redis (Upstash).
-- 🎬 **Multi-Platform Content Generation** optimized for LinkedIn, Instagram, Medium, and YouTube.
-- 📓 **Notion Integration**: Automatically publishes generated content to a Notion database as drafts for review.
-- 🧠 **Flexible LLM Backends**: Mistral (active default), Google Gemini, GitHub OpenAI, and Ollama.
-- 💾 **Structured Output**: All agent responses are validated using Pydantic before processing.
-- 📁 **Organized Local Storage**: Generated content is also saved as JSON under `src/assets/output/<YYYYMMDD>/`.
-- 🔁 **Built-in Resilience**: Includes retry logic and rate-limit safety (60s sleep between calls).
+- 🎬 **Multi-Platform Content Generation** optimized for LinkedIn, Instagram, Twitter, and YouTube. (Medium has been deprecated in favor of Twitter threads).
+- 📓 **Notion Integration**: Automatically publishes generated content to a Notion database as drafts for review. Automatically handles content chunking to respect database limits.
+- 🧠 **Flexible LLM Backends**: Primarily driven by Google Gemini (`gemini-3.1-flash-lite`), efficiently handling long-context inputs and detailed structured output.
+- 💾 **Structured Output**: All agent responses are rigorously validated using Pydantic before processing.
+- 📁 **Organized Local Storage**: Generated content is saved as JSON and Markdown under `src/assets/output/<YYYYMMDD>/` for backup and auditing.
+- 🔁 **Built-in Resilience**: Includes retry logic and rate-limit safety (60s sleep between API calls) to prevent backend exhaustion.
+- ⚙️ **Selective Execution Mode**: Leverage token usage efficiently by specifying exact agents and target platforms dynamically via CLI.
 
 ---
 
@@ -65,23 +66,23 @@ air-kuwt/
 ├── TODO.md
 ├── README.md
 └── src/
-    ├── main.py                       # AgentOrchestrator — coordinates pipeline & publishing
+    ├── main.py                       # AgentOrchestrator — pipeline coordination & CLI execution
     │
     ├── agents/                       # AI agent implementations (Researchers, Teachers, Enthusiasts)
-    ├── brains/                       # LLM backend integrations (Mistral, Gemini, etc.)
-    ├── models/                       # Pydantic response schemas
+    ├── brains/                       # LLM backend integrations (Gemini, Mistral, etc.)
+    ├── models/                       # Pydantic response schemas (LinkedIn, Instagram, Twitter, YouTube)
     ├── prompts/                      # LLM system prompts
     ├── publishers/                   # Content distribution logic
     │   └── notion_publisher.py       # Notion database integration
     │
-    ├── tools/                        # Data collection utilities (HF, GitHub, Redis)
+    ├── tools/                        # Data collection utilities (HF, GitHub, Redis, News)
     ├── rendering/                    # Output normalization & formatting
     │   ├── normalize.py              # Logic to build platform-specific PostCards
     │   └── post_digest.py            # PostCard and Platform data models
     │
     ├── utils/                        # Shared utilities (logger, paths, etc.)
     └── assets/
-        └── output/                   # Local JSON content storage (by date)
+        └── output/                   # Local JSON/Markdown content storage (by date)
 ```
 
 ---
@@ -94,35 +95,26 @@ Analyzes trending papers from Hugging Face and generates specific content format
 
 | Platform  | Response Model            |
 | --------- | ------------------------- |
-| LinkedIn  | `LinkedInResearchPost`    |
-| Instagram | `InstagramResearchScript` |
-| Medium    | `MediumResearchArticle`   |
-| YouTube   | `YouTubeResearchScript`   |
+| LinkedIn  | `LinkedInPost`            |
+| Instagram | `ReelScript`              |
+| Twitter   | `TwitterThread`           |
+| YouTube   | `YouTubeScript`           |
 
 ---
 
 ### 2. Teachers Agent (`src/agents/teachers.py`)
 
-Creates educational segments based on fundamental topics stored in Redis.
+Creates educational segments based on fundamental topics stored in Redis. Provides comprehensive coverage tailored to social media lengths.
 
-| Platform  | Response Model      |
-| --------- | ------------------- |
-| LinkedIn  | `LinkedinResponse`  |
-| Instagram | `InstagramResponse` |
-| Medium    | `MediumResponse`    |
-| YouTube   | `YoutubeResponse`   |
+*Inherits the same robust `LinkedInPost`, `ReelScript`, `TwitterThread`, and `YouTubeScript` models.*
 
 ---
 
 ### 3. Enthusiasts Agent (`src/agents/enthusiasts.py`)
 
-Summarizes trending open-source projects and AI news.
+Summarizes trending open-source projects, global AI updates, and technology news. Ensures all news items are synthesized for quick consumption.
 
-| Platform  | Response Model       |
-| --------- | -------------------- |
-| LinkedIn  | `LinkedinNewsPost`   |
-| Instagram | `InstagramNewsVideo` |
-| YouTube   | `YoutubeNewsVideo`   |
+*Inherits the same robust models defined for other agents.*
 
 ---
 
@@ -153,14 +145,13 @@ Summarizes trending open-source projects and AI news.
 
 ## Configuration
 
-Your `.env` file should include:
+Your `.env` file should include at minimum:
 
 ```env
 # LLM APIs
-MISTRAL_API_KEY=your_key
-RESEARCHER_GEMINI=your_key
-ENTHUSIAST_GEMINI=your_key
-TEACHER_GEMINI=your_key
+RESEARCHER_GEMINI=your_gemini_api_key
+ENTHUSIAST_GEMINI=your_gemini_api_key
+TEACHER_GEMINI=your_gemini_api_key
 
 # Notion Integration
 NOTION_TOKEN=your_notion_integration_token
@@ -178,19 +169,34 @@ REDIS_URL=your_redis_url
 
 ### Run the Pipeline
 
-The orchestrator executes agents and publishes to Notion:
+The orchestrator guarantees flexible generation options. To execute all agents safely for all platforms and publish the output to Notion:
 
 ```bash
 # Set PYTHONPATH to src and run main
-PYTHONPATH=src python src/main.py
+PYTHONPATH=src python src/main.py --agents all --platforms all --publish --save
 ```
 
-### Main Flow (`src/main.py`)
+### Advanced Selective Execution
 
-```python
-orchestrator = AgentOrchestrator()
-orchestrator.run()         # Executes all agents
-orchestrator.publish()     # Normalizes content and pushes to Notion
+You can target specific platforms and agents to optimize token usage (e.g., bypassing video generation if you only need text feeds). 
+
+```bash
+usage: main.py [-h] [--agents] [--platforms] [--publish] [--save]
+
+options:
+  -h, --help            show this help message and exit
+  --agents {researchers,enthusiasts,teachers,all} [...]
+                        Specific agents to run (default: all)
+  --platforms {linkedin,instagram,twitter,youtube,all} [...]
+                        Specific platforms to generate for (default: all)
+  --publish             Automatically publish generated content to Notion
+  --save                Save generated content as markdown files locally
+```
+
+**Example:** Target just GitHub repositories / News (Enthusiasts) and publish mainly to Twitter and LinkedIn while keeping local backups:
+
+```bash
+PYTHONPATH=src python src/main.py --agents enthusiasts --platforms twitter linkedin --publish --save
 ```
 
 ---
@@ -199,18 +205,18 @@ orchestrator.publish()     # Normalizes content and pushes to Notion
 
 ### Notion Database
 
-Content is published with the following properties:
+Content is published natively with the following properties:
 
 - **Name**: The post title.
-- **Platform**: LinkedIn, Instagram, Medium, or YouTube.
+- **Platform**: LinkedIn, Instagram, Twitter, or YouTube.
 - **Status**: Set to `Draft` by default.
 - **Date**: Today's date.
 - **Type**: Research, News & Repos, or Fundamentals.
-- **Content**: Full markdown content stored in the page body and a summary field.
+- **Content**: Full markdown body. (Dynamically formatted to bypass standard Notion length constraints.)
 
 ### Local Storage
 
-JSON files are saved to `src/assets/output/<YYYYMMDD>/` for backup and debugging.
+Both raw JSON outputs and nicely formatted Markdown templates are saved to `src/assets/output/<YYYYMMDD>/`. Use these for backup, debugging, and direct reading without Notion.
 
 ---
 
@@ -219,7 +225,7 @@ JSON files are saved to `src/assets/output/<YYYYMMDD>/` for backup and debugging
 | Category            | Library                   |
 | ------------------- | ------------------------- |
 | **Agent Framework** | `langchain`               |
-| **LLMs**            | Mistral AI, Google Gemini |
+| **LLMs**            | Google Gemini             |
 | **Publisher**       | `notion-client`           |
 | **Validation**      | `pydantic`                |
 | **Data Sources**    | Redis, BS4, Requests      |
@@ -232,9 +238,12 @@ JSON files are saved to `src/assets/output/<YYYYMMDD>/` for backup and debugging
 See [TODO.md](TODO.md) for detailed tasks.
 
 - [x] Integrate Notion for automated publishing.
+- [x] Allow for efficient cross-platform targeted executions.
+- [x] Extend content for Twitter Threads dynamically.
+- [ ] Add auto posting for linkedin and X.
 - [ ] Implement multi-modal content (image generation for Instagram).
 - [ ] Add content scheduling directly from Notion.
-- [ ] Expand to Twitter/X and Bluesky.
+- [ ] Expand to Bluesky.
 
 ---
 
